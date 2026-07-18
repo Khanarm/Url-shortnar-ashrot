@@ -4,6 +4,7 @@ from database import db
 from models import URL
 import string
 import random
+from models import URL
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -57,3 +58,19 @@ def redirect_url(short_code):
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+@app.route("/dashboard")
+def dashboard():
+
+    urls = URL.query.all()
+
+    total_links = len(urls)
+
+    total_clicks = sum(url.clicks for url in urls)
+
+    return render_template(
+        "dashboard.html",
+        urls=urls,
+        total_links=total_links,
+        total_clicks=total_clicks
+    )
