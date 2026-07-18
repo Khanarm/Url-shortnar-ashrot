@@ -1,7 +1,10 @@
 from flask import Blueprint, render_template
 from models import URL
 
-dashboard_bp = Blueprint("dashboard", __name__)
+dashboard_bp = Blueprint(
+    "dashboard",
+    __name__
+)
 
 
 @dashboard_bp.route("/dashboard")
@@ -11,7 +14,9 @@ def dashboard():
 
     total_links = len(urls)
 
-    total_clicks = sum(url.clicks for url in urls)
+    total_clicks = sum(
+        url.clicks for url in urls
+    )
 
     return render_template(
         "dashboard.html",
