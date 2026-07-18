@@ -1,11 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URL Shortener</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>🚀 URL Shortener</h1>
-    <p>Welcome! Phase 1 is working successfully.</p>
+
+<nav class="navbar">
+    <div class="logo">
+        URL Shortener
+    </div>
+
+    <ul class="menu">
+        <li><a href="/">Home</a></li>
+        <li><a href="#">Features</a></li>
+        <li><a href="#">Pricing</a></li>
+        <li><a href="#">Contact</a></li>
+    </ul>
+</nav>
+
+<section class="hero">
+
+    <h1>Shorten Your Long URLs</h1>
+
+    <p>
+        Fast, Secure and Reliable URL Shortener.
+    </p>
+
+    <div class="shortener-box">
+
+        <input
+            type="url"
+            placeholder="Paste your long URL here...">
+
+        <button>
+            Shorten URL
+        </button>
+
+    </div>
+
+</section>
+
+<section class="features">
+
+    <div class="card">
+        <h2>Fast</h2>
+        <p>Create short links instantly.</p>
+    </div>
+
+    <div class="card">
+        <h2>Secure</h2>
+        <p>Your links stay safe and protected.</p>
+    </div>
+
+    <div class="card">
+        <h2>Analytics</h2>
+        <p>Track every click in real time.</p>
+    </div>
+
+</section>
+
+<footer>
+
+    © 2026 URL Shortener. All Rights Reserved.
+
+</footer>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
 </body>
-</html>
+            </html>
