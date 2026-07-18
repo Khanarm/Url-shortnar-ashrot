@@ -2,8 +2,9 @@ import os
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-DATABASE_NAME = "database.db"
+class Config:
+    SECRET_KEY = "change-this-secret-key"
 
-DATABASE_PATH = os.path.join(BASE_DIR, DATABASE_NAME)
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(BASE_DIR, "database.db")
 
-SECRET_KEY = "change-this-to-a-random-secret-key"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
