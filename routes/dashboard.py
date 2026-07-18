@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for
+from models import URL
 from database import db
 
 dashboard_bp = Blueprint(
