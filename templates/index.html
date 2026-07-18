@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
 
 <nav class="navbar">
@@ -22,6 +23,7 @@
     </ul>
 </nav>
 
+
 <section class="hero">
 
     <h1>Shorten Your Long URLs</h1>
@@ -30,19 +32,43 @@
         Fast, Secure and Reliable URL Shortener.
     </p>
 
+
     <div class="shortener-box">
 
-        <input
-            type="url"
-            placeholder="Paste your long URL here...">
+        <form method="POST">
 
-        <button>
-            Shorten URL
-        </button>
+            <input
+                type="url"
+                name="url"
+                placeholder="Paste your long URL here..."
+                required>
+
+            <button type="submit">
+                Shorten URL
+            </button>
+
+        </form>
+
+
+        {% if short_url %}
+
+        <div class="result">
+
+            <h3>Your Short URL:</h3>
+
+            <a href="{{ short_url }}" target="_blank">
+                {{ short_url }}
+            </a>
+
+        </div>
+
+        {% endif %}
+
 
     </div>
 
 </section>
+
 
 <section class="features">
 
@@ -51,10 +77,12 @@
         <p>Create short links instantly.</p>
     </div>
 
+
     <div class="card">
         <h2>Secure</h2>
         <p>Your links stay safe and protected.</p>
     </div>
+
 
     <div class="card">
         <h2>Analytics</h2>
@@ -63,13 +91,16 @@
 
 </section>
 
+
 <footer>
 
     © 2026 URL Shortener. All Rights Reserved.
 
 </footer>
 
+
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
+
 </body>
-            </html>
+</html>
