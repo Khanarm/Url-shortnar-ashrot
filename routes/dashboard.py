@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template
-from models import URL
+from flask import Blueprint, render_template, redirect, url_for
+from database import db
 
 dashboard_bp = Blueprint(
     "dashboard",
@@ -24,3 +24,13 @@ def dashboard():
         total_links=total_links,
         total_clicks=total_clicks
     )
+
+@dashboard_bp.route("/delete/<int:id>")
+def delete_url(id):
+
+    url = URL.query.get_or_404(id)
+
+    db.session.delete(url)
+    db.session.commit()
+
+    return redirect(url_for("dashboard.dashboard"))
