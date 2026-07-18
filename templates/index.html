@@ -52,17 +52,35 @@
 
         {% if short_url %}
 
-        <div class="result">
+<div class="result">
 
-            <h3>Your Short URL:</h3>
+    <h3>Your Short URL</h3>
 
-            <a href="{{ short_url }}" target="_blank">
-                {{ short_url }}
-            </a>
+    <input
+        id="shortLink"
+        type="text"
+        value="{{ short_url }}"
+        readonly>
 
-        </div>
+    <div style="margin-top:15px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
 
-        {% endif %}
+        <button
+            type="button"
+            onclick="copyLink(document.getElementById('shortLink').value)">
+            📋 Copy
+        </button>
+
+        <a href="{{ short_url }}" target="_blank">
+            <button type="button">
+                🔗 Open
+            </button>
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
 
 
     </div>
