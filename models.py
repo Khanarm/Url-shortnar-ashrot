@@ -28,4 +28,3 @@ def redirect_url(short_code):
         return redirect(url.original_url)
 
     return "Link not found", 404
-Ab flow aisa hoga:
