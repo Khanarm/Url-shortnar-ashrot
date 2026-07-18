@@ -65,11 +65,17 @@
             <td>{{ url.clicks }}</td>
 
             <td>
-                <button
-                    type="button"
-                    onclick="copyLink('{{ request.host_url }}{{ url.short_code }}')">
-                    copy
-                </button>
+
+    <button
+        type="button"
+        onclick="copyLink('{{ request.host_url }}{{ url.short_code }}')">
+        Copy
+    </button>
+
+    <a href="/delete/{{ url.id }}">
+        Delete
+    </a>
+
             </td>
 
         </tr>
