@@ -1,6 +1,4 @@
 from database import db
-from flask import redirect
-from models import URL
 
 
 class URL(db.Model):
@@ -15,16 +13,3 @@ class URL(db.Model):
     clicks = db.Column(db.Integer, default=0)
 
     created_at = db.Column(db.DateTime, server_default=db.func.now())
-
-@app.route("/<short_code>")
-def redirect_url(short_code):
-
-    url = URL.query.filter_by(short_code=short_code).first()
-
-    if url:
-        url.clicks += 1
-        db.session.commit()
-
-        return redirect(url.original_url)
-
-    return "Link not found", 404
