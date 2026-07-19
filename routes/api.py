@@ -14,7 +14,7 @@ def generate_code(length=6):
         code = "".join(
             random.choice(chars)
             for _ in range(length)
-        ) + "-alice"
+        )
 
         exists = URL.query.filter_by(short_code=code).first()
 
@@ -35,7 +35,12 @@ def shorten_api():
 
     original_url = data["url"]
 
-    code = generate_code()
+    alias = data.get("alias", "").strip()
+
+    if alias:
+        code = f"{generate_code()}-{alias}"
+    else:
+        code = generate_code()
 
     new_url = URL(
         original_url=original_url,
