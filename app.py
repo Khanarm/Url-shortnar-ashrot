@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from config import Config
 from database import db
 
@@ -18,6 +18,13 @@ with app.app_context():
 app.register_blueprint(home_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(links_bp)
+
+
+# Custom 404 Error Page
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("404.html"), 404
+
 
 if __name__ == "__main__":
     app.run(debug=True)
