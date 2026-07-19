@@ -1,6 +1,7 @@
 from flask import Blueprint, redirect, render_template
 from database import db
 from models import URL
+from flask import render_template
 
 links_bp = Blueprint("links", __name__)
 
@@ -42,3 +43,10 @@ def go(short_code):
     db.session.commit()
 
     return redirect(url.original_url)
+
+@links_bp.route("/wait1/<short_code>")
+def wait1(short_code):
+    return render_template(
+        "wait1.html",
+        short_code=short_code
+    )
