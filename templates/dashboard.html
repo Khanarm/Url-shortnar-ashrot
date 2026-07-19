@@ -41,7 +41,8 @@
 
     <h2>Your Links</h2>
 
-    <form method="GET" action="/dashboard" style="margin:20px 0; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+    <form method="GET" action="/dashboard"
+          style="margin:20px 0;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
 
         <input
             type="text"
@@ -49,14 +50,10 @@
             placeholder="Search URL or Alias..."
             value="{{ search }}">
 
-        <button type="submit">
-            Search
-        </button>
+        <button type="submit">Search</button>
 
         <a href="/dashboard">
-            <button type="button">
-                Clear
-            </button>
+            <button type="button">Clear</button>
         </a>
 
     </form>
@@ -103,6 +100,49 @@
         {% endfor %}
 
     </table>
+
+    <div style="margin-top:30px;text-align:center;">
+
+        {% if pagination.has_prev %}
+            <a href="{{ url_for('dashboard.dashboard', page=pagination.prev_num, search=search) }}">
+                ⬅ Previous
+            </a>
+        {% endif %}
+
+        {% for page_num in pagination.iter_pages() %}
+
+            {% if page_num %}
+
+                {% if page_num == pagination.page %}
+
+                    <strong style="margin:0 8px;">
+                        {{ page_num }}
+                    </strong>
+
+                {% else %}
+
+                    <a style="margin:0 8px;"
+                       href="{{ url_for('dashboard.dashboard', page=page_num, search=search) }}">
+                        {{ page_num }}
+                    </a>
+
+                {% endif %}
+
+            {% else %}
+
+                ...
+
+            {% endif %}
+
+        {% endfor %}
+
+        {% if pagination.has_next %}
+            <a href="{{ url_for('dashboard.dashboard', page=pagination.next_num, search=search) }}">
+                Next ➡
+            </a>
+        {% endif %}
+
+    </div>
 
 </section>
 
