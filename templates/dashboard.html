@@ -1,50 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+{% extends "base.html" %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
+{% block title %}
+Dashboard - URL Shortener
+{% endblock %}
 
-<body>
 
-<nav class="navbar">
-    <div class="logo">
-        URL Shortener
-    </div>
+{% block content %}
 
-    <ul class="menu">
-        <li><a href="/">Home</a></li>
-        <li><a href="/dashboard">Dashboard</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/contact">Contact</a></li>
-    </ul>
-</nav>
-    
 <section class="hero">
 
     <h1>Dashboard</h1>
 
+
     <div class="features">
 
         <div class="card">
+
             <h2>Total Links</h2>
+
             <p>{{ total_links }}</p>
+
         </div>
 
+
         <div class="card">
+
             <h2>Total Clicks</h2>
+
             <p>{{ total_clicks }}</p>
+
         </div>
+
 
     </div>
 
+
+
     <h2>Your Links</h2>
 
-    <form method="GET" action="/dashboard"
-          style="margin:20px 0;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+
+
+    <form method="GET"
+          action="/dashboard"
+          style="margin:20px 0; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+
 
         <input
             type="text"
@@ -52,83 +51,176 @@
             placeholder="Search URL or Alias..."
             value="{{ search }}">
 
-        <button type="submit">Search</button>
+
+        <button type="submit">
+            Search
+        </button>
+
 
         <a href="/dashboard">
-            <button type="button">Clear</button>
+
+            <button type="button">
+                Clear
+            </button>
+
         </a>
+
 
     </form>
 
+
+
+
     <table>
 
+
         <tr>
+
             <th>Original URL</th>
+
             <th>Short URL</th>
+
             <th>Clicks</th>
+
             <th>Actions</th>
+
         </tr>
+
+
 
         {% for url in urls %}
 
+
         <tr>
 
-            <td>{{ url.original_url }}</td>
 
             <td>
-                <a href="{{ request.host_url }}{{ url.short_code }}" target="_blank">
-                    {{ request.host_url }}{{ url.short_code }}
-                </a>
+                {{ url.original_url }}
             </td>
 
-            <td>{{ url.clicks }}</td>
+
 
             <td>
+
+                <a href="{{ request.host_url }}{{ url.short_code }}"
+                   target="_blank">
+
+                    {{ request.host_url }}{{ url.short_code }}
+
+                </a>
+
+            </td>
+
+
+
+            <td>
+                {{ url.clicks }}
+            </td>
+
+
+
+
+            <td>
+
 
                 <button
                     type="button"
                     onclick="copyLink('{{ request.host_url }}{{ url.short_code }}')">
+
                     Copy
+
                 </button>
 
+
+
                 <a href="/delete/{{ url.id }}">
+
                     Delete
+
                 </a>
 
+
+
+            </td>
+
+
+
+        </tr>
+
+
+        {% else %}
+
+
+        <tr>
+
+            <td colspan="4">
+                No links found.
             </td>
 
         </tr>
 
+
         {% endfor %}
+
+
 
     </table>
 
-    <div style="margin-top:30px;text-align:center;">
+
+
+
+    <div style="margin-top:30px; display:flex; justify-content:center; gap:8px; flex-wrap:wrap;">
+
+
 
         {% if pagination.has_prev %}
-            <a href="{{ url_for('dashboard.dashboard', page=pagination.prev_num, search=search) }}">
+
+        <a href="{{ url_for('dashboard.dashboard', page=pagination.prev_num, search=search) }}">
+
+            <button>
                 ⬅ Previous
-            </a>
+            </button>
+
+        </a>
+
         {% endif %}
+
+
+
 
         {% for page_num in pagination.iter_pages() %}
 
+
+
             {% if page_num %}
+
+
 
                 {% if page_num == pagination.page %}
 
-                    <strong style="margin:0 8px;">
-                        {{ page_num }}
-                    </strong>
+
+                <button disabled>
+                    {{ page_num }}
+                </button>
+
+
 
                 {% else %}
 
-                    <a style="margin:0 8px;"
-                       href="{{ url_for('dashboard.dashboard', page=page_num, search=search) }}">
+
+                <a href="{{ url_for('dashboard.dashboard', page=page_num, search=search) }}">
+
+                    <button>
                         {{ page_num }}
-                    </a>
+                    </button>
+
+                </a>
+
+
 
                 {% endif %}
+
+
 
             {% else %}
 
@@ -136,19 +228,35 @@
 
             {% endif %}
 
+
+
         {% endfor %}
 
+
+
+
+
         {% if pagination.has_next %}
-            <a href="{{ url_for('dashboard.dashboard', page=pagination.next_num, search=search) }}">
+
+
+        <a href="{{ url_for('dashboard.dashboard', page=pagination.next_num, search=search) }}">
+
+            <button>
                 Next ➡
-            </a>
+            </button>
+
+        </a>
+
+
         {% endif %}
+
+
 
     </div>
 
+
+
 </section>
 
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
-</body>
-            </html>
+{% endblock %}
