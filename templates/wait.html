@@ -22,15 +22,13 @@
         <h1>🛡️ Secure Link Verification</h1>
 
         <p id="status">
-            Please wait while we prepare your destination...
+            🕒 Preparing your destination. Please wait...
         </p>
 
         <h2 id="countdown">10</h2>
 
         <div class="progress">
-
             <div id="progressBar"></div>
-
         </div>
 
     </div>
@@ -45,7 +43,7 @@
         <h2>🔒 Safe Browsing</h2>
 
         <p>
-            Always verify websites before sharing personal information.
+            Always verify the website before sharing personal information.
         </p>
 
     </div>
@@ -62,10 +60,10 @@
 
     <div class="card">
 
-        <h2>💡 Tip</h2>
+        <h2>💡 Security Tip</h2>
 
         <p>
-            Bookmark trusted websites and avoid suspicious links.
+            Never share passwords or OTPs on unknown websites.
         </p>
 
     </div>
@@ -75,24 +73,28 @@
 
 <section class="faq">
 
-    <h2>Frequently Asked Questions</h2>
+    <h2 style="text-align:center;color:white;margin-bottom:25px;">
+        Frequently Asked Questions
+    </h2>
 
-    <div class="faq-box">
+    <div class="card">
 
         <h3>Why do I need to wait?</h3>
 
         <p>
-            We prepare your destination before redirecting.
+            We prepare and verify your destination before continuing.
         </p>
 
     </div>
 
-    <div class="faq-box">
+    <br>
+
+    <div class="card">
 
         <h3>Is this link safe?</h3>
 
         <p>
-            Always check the destination before entering personal information.
+            Always verify the destination before entering personal information.
         </p>
 
     </div>
@@ -100,7 +102,7 @@
 </section>
 
 
-<div style="width:90%;max-width:700px;margin:40px auto;text-align:center;">
+<div style="width:90%;max-width:700px;margin:50px auto;text-align:center;">
 
     <p id="readyText"></p>
 
@@ -109,9 +111,7 @@
     <a href="/go/{{ short_code }}">
 
         <button id="continueBtn" disabled>
-
             Continue
-
         </button>
 
     </a>
@@ -127,6 +127,7 @@ const countdown = document.getElementById("countdown");
 const progress = document.getElementById("progressBar");
 const button = document.getElementById("continueBtn");
 const ready = document.getElementById("readyText");
+const status = document.getElementById("status");
 
 progress.style.width = "0%";
 
@@ -136,17 +137,21 @@ const timer = setInterval(function(){
 
     countdown.innerHTML = time;
 
-    progress.style.width = ((10-time)*10) + "%";
+    progress.style.width = ((10 - time) * 10) + "%";
 
     if(time <= 0){
 
         clearInterval(timer);
 
-        countdown.innerHTML = "✅";
+        countdown.innerHTML = "🕒";
 
-        ready.innerHTML = "✅ Verification complete. You can continue below.";
+        status.innerHTML = "🕒 Verification completed successfully.";
+
+        ready.innerHTML = "⬇️ Please scroll below and click the Continue button.";
 
         button.disabled = false;
+
+        button.innerHTML = "Continue";
 
     }
 
@@ -156,4 +161,4 @@ const timer = setInterval(function(){
 
 </body>
 
-            </html>
+</html>
