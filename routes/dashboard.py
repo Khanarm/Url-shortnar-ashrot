@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from sqlalchemy import or_
+from sqlalchemy import or_, func
 from models import URL
 from database import db
 
@@ -36,8 +36,13 @@ def dashboard():
 
     urls = pagination.items
 
+    # Total matching links
     total_links = query.count()
-    total_clicks = sum(url.clicks for url in urls)
+
+    # Total clicks of all matching links (not just current page)
+    total_clicks = (
+        query.with_entities(func.sum(URL.clicks)).scalar() or 0
+    )
 
     return render_template(
         "dashboard.html",
