@@ -1,71 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms & Conditions</title>
+{% extends "base.html" %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
+{% block title %}
+Terms & Conditions
+{% endblock %}
 
-<body>
 
-<nav class="navbar">
-    <div class="logo">
-        URL Shortener
-    </div>
-
-    <ul class="menu">
-        <li><a href="/">Home</a></li>
-        <li><a href="/dashboard">Dashboard</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/contact">Contact</a></li>
-        <li><a href="/privacy">Privacy</a></li>
-        <li><a href="/terms">Terms</a></li>
-    </ul>
-</nav>
+{% block content %}
 
 <section class="hero">
 
-    <h1>Terms & Conditions</h1>
+<h1>Terms & Conditions</h1>
 
-    <div style="max-width:900px; margin:auto; text-align:left; line-height:1.8;">
 
-        <h2>Acceptance of Terms</h2>
-        <p>
-            By using this website, you agree to these Terms and Conditions.
-        </p>
+<div style="max-width:900px;margin:auto;text-align:left;line-height:1.8;">
 
-        <h2>Use of Service</h2>
-        <p>
-            You agree not to misuse the service or create links for illegal,
-            harmful, or abusive content.
-        </p>
 
-        <h2>Availability</h2>
-        <p>
-            We may modify, suspend, or discontinue the service at any time
-            without prior notice.
-        </p>
+<h2>Acceptance</h2>
 
-        <h2>Limitation of Liability</h2>
-        <p>
-            We are not responsible for any loss or damages resulting from
-            the use of this website.
-        </p>
+<p>
+By using our website, you agree to these terms.
+</p>
 
-        <h2>Changes</h2>
-        <p>
-            These Terms may be updated from time to time without prior notice.
-        </p>
 
-    </div>
+<h2>Usage</h2>
+
+<p>
+You must not use this service for illegal or harmful activities.
+</p>
+
+
+<h2>Service Availability</h2>
+
+<p>
+We may update or modify the service anytime.
+</p>
+
+
+<h2>Disclaimer</h2>
+
+<p>
+We are not responsible for misuse of generated links.
+</p>
+
+
+</div>
 
 </section>
 
-<footer>
-    © 2026 URL Shortener. All Rights Reserved.
-</footer>
-
-</body>
-</html>
+{% endblock %}
