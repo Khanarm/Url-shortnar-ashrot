@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Destination Ready</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<section class="hero">
+
+    <div class="shortener-box">
+
+        <h1>🛡️ Destination Ready</h1>
+
+        <p>
+            🕒 Verification completed successfully.
+        </p>
+
+        <h2>✅</h2>
+
+        <div class="progress">
+
+            <div id="progressBar" style="width:100%;"></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="features">
+
+    <div class="card">
+
+        <h2>🔒 Safe Browsing</h2>
+
+        <p>
+            Always verify the website before sharing personal information.
+        </p>
+
+    </div>
+
+    <div class="card">
+
+        <h2>⚡ Fast Redirect</h2>
+
+        <p>
+            Your destination is now ready to open.
+        </p>
+
+    </div>
+
+    <div class="card">
+
+        <h2>💡 Security Tip</h2>
+
+        <p>
+            Never share passwords or OTPs on unknown websites.
+        </p>
+
+    </div>
+
+</section>
+
+
+<section class="faq">
+
+    <h2 style="text-align:center;color:white;margin-bottom:25px;">
+        Before You Continue
+    </h2>
+
+    <div class="card">
+
+        <h3>Leaving This Website</h3>
+
+        <p>
+            You are about to open the destination website in your browser.
+        </p>
+
+    </div>
+
+</section>
+
+
+<div style="width:90%;max-width:700px;margin:50px auto;text-align:center;">
+
+    <p id="readyText">
+        Click the button below to open your destination.
+    </p>
+
+    <br>
+
+    <a href="/go/{{ short_code }}">
+
+        <button>
+            Open Destination
+        </button>
+
+    </a>
+
+</div>
+
+</body>
+
+</html>
