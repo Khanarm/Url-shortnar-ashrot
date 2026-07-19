@@ -392,3 +392,49 @@ footer {
 }
 
 }
+
+.qr-box {
+
+    margin-top:20px;
+
+    display:flex;
+    justify-content:center;
+
+}
+
+
+.qr-box img {
+
+    padding:15px;
+
+    background:white;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+
+    animation: qrShow .4s ease;
+
+}
+
+
+@keyframes qrShow {
+
+    from {
+
+        transform:scale(.7);
+
+        opacity:0;
+
+    }
+
+
+    to {
+
+        transform:scale(1);
+
+        opacity:1;
+
+    }
+
+    }
