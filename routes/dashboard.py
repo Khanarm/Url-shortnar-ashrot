@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for
+from sqlalchemy import or_
 from models import URL
 from database import db
 
@@ -11,20 +12,42 @@ dashboard_bp = Blueprint(
 @dashboard_bp.route("/dashboard")
 def dashboard():
 
-    urls = URL.query.all()
+    search = request.args.get("search", "").strip()
+    page = request.args.get("page", 1, type=int)
 
-    total_links = len(urls)
+    query = URL.query
 
-    total_clicks = sum(
-        url.clicks for url in urls
+    if search:
+        query = query.filter(
+            or_(
+                URL.original_url.ilike(f"%{search}%"),
+                URL.short_code.ilike(f"%{search}%")
+            )
+        )
+
+    query = query.order_by(URL.id.desc())
+
+    pagination = db.paginate(
+        query,
+        page=page,
+        per_page=30,
+        error_out=False
     )
+
+    urls = pagination.items
+
+    total_links = query.count()
+    total_clicks = sum(url.clicks for url in urls)
 
     return render_template(
         "dashboard.html",
         urls=urls,
         total_links=total_links,
-        total_clicks=total_clicks
+        total_clicks=total_clicks,
+        search=search,
+        pagination=pagination
     )
+
 
 @dashboard_bp.route("/delete/<int:id>")
 def delete_url(id):
