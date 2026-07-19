@@ -19,6 +19,7 @@ with app.app_context():
 app.register_blueprint(home_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(links_bp)
+app.register_blueprint(api_bp)
 
 
 # Custom 404 Error Page
