@@ -5,6 +5,7 @@ from database import db
 from routes.home import home_bp
 from routes.dashboard import dashboard_bp
 from routes.links import links_bp
+from routes.api import api_bp
 
 app = Flask(__name__)
 app.config.from_object(Config)
