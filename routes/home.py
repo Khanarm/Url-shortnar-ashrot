@@ -34,7 +34,6 @@ def home():
 
                 if URL.query.filter_by(short_code=custom_alias).first():
                     error = "This alias is already taken."
-
                 else:
                     code = custom_alias
 
@@ -63,3 +62,8 @@ def home():
 @home_bp.route("/about")
 def about():
     return render_template("about.html")
+
+
+@home_bp.route("/contact")
+def contact():
+    return render_template("contact.html")
