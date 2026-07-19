@@ -3,96 +3,269 @@
 
 <head>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Secure Link Verification</title>
+<title>Financial Awareness Verification</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/style.css') }}">
 
 </head>
 
+
 <body>
 
-<section class="hero">
 
-    <div class="shortener-box">
+<!-- TOP AD PLACEHOLDER -->
+<div style="width:90%;max-width:728px;height:90px;margin:20px auto;text-align:center;">
 
-        <h1>🛡️ Final Link Verification</h1>
-
-        <p id="status">
-            🕒 Preparing your destination. Please wait...
-        </p>
-
-        <h2 id="countdown">10</h2>
-
-        <div class="progress">
-            <div id="progressBar"></div>
-        </div>
-
-    </div>
-
-</section>
-
-
-<section class="features">
-
-    <div class="card">
-
-        <h2>🔒 Secure Access</h2>
-
-        <p>
-            Your destination link is being verified.
-        </p>
-
-    </div>
-
-
-    <div class="card">
-
-        <h2>⚡ Almost Done</h2>
-
-        <p>
-            Please wait until verification completes.
-        </p>
-
-    </div>
-
-
-    <div class="card">
-
-        <h2>💡 Stay Safe</h2>
-
-        <p>
-            Avoid entering sensitive information on unknown websites.
-        </p>
-
-    </div>
-
-</section>
-
-
-<div style="width:90%;max-width:700px;margin:50px auto;text-align:center;">
-
-    <p id="readyText"></p>
-
-    <br>
-
-    <a href="/go/{{ short_code }}">
-
-        <button id="continueBtn" disabled>
-            Continue
-        </button>
-
-    </a>
+    <!-- Ad Banner Code Here -->
 
 </div>
 
 
+
+<section class="hero">
+
+<div class="shortener-box">
+
+
+<h1>💰 Financial Awareness</h1>
+
+
+<p id="status">
+🕒 Preparing your destination. Please wait...
+</p>
+
+
+<h2 id="countdown">10</h2>
+
+
+<div class="progress">
+
+<div id="progressBar"></div>
+
+</div>
+
+
+</div>
+
+</section>
+
+
+
+
+
+
+<section class="faq">
+
+
+<h2 style="text-align:center;color:white;margin-bottom:25px;">
+📊 Smart Money Guide
+</h2>
+
+
+
+<div class="card">
+
+<h3>💰 Manage Your Money</h3>
+
+<p>
+Creating a simple budget helps you understand your expenses and plan your
+financial goals better.
+</p>
+
+</div>
+
+
+<br>
+
+
+<div class="card">
+
+<h3>💳 Safe Digital Payments</h3>
+
+<p>
+Always use trusted payment methods and never share OTP, PIN or banking
+information with anyone.
+</p>
+
+</div>
+
+
+<br>
+
+
+<div class="card">
+
+<h3>📈 Saving Habits</h3>
+
+<p>
+Small and consistent saving habits can help you build better financial
+discipline over time.
+</p>
+
+</div>
+
+
+<br>
+
+
+<div class="card">
+
+<h3>🔐 Protect Your Money</h3>
+
+<p>
+Be careful with unknown links, fake offers and suspicious messages related
+to your financial accounts.
+</p>
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+<section class="faq">
+
+
+<h2 style="text-align:center;color:white;margin-bottom:25px;">
+🌐 Digital Finance Safety
+</h2>
+
+
+
+<div class="card">
+
+<h3>📱 Online Banking Safety</h3>
+
+<p>
+Keep your devices updated and use security features to protect your accounts.
+</p>
+
+</div>
+
+
+<br>
+
+
+<div class="card">
+
+<h3>⚡ Think Before Investing</h3>
+
+<p>
+Understand any financial decision properly before taking action.
+Avoid promises of unrealistic returns.
+</p>
+
+</div>
+
+
+<br>
+
+
+<div class="card">
+
+<h3>🛡️ Avoid Scams</h3>
+
+<p>
+Do not trust unknown messages, fake rewards or websites asking for personal
+details.
+</p>
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+<section class="faq">
+
+
+<h2 style="text-align:center;color:white;margin-bottom:25px;">
+❓ Finance FAQ
+</h2>
+
+
+
+<div class="card">
+
+<h3>Why is financial awareness important?</h3>
+
+<p>
+Understanding money management helps you make smarter financial choices.
+</p>
+
+</div>
+
+
+<br>
+
+
+<div class="card">
+
+<h3>How can I stay financially safe online?</h3>
+
+<p>
+Use trusted platforms and never share sensitive account information.
+</p>
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+
+<div style="width:90%;max-width:700px;margin:50px auto;text-align:center;">
+
+
+<p id="readyText"></p>
+
+
+<br>
+
+
+<a href="/go/{{ short_code }}">
+
+
+<button id="continueBtn" disabled>
+
+Continue
+
+</button>
+
+
+</a>
+
+
+</div>
+
+
+
+
+
+
+
+
 <script>
 
+
 let time = 10;
+
 
 const countdown = document.getElementById("countdown");
 const progress = document.getElementById("progressBar");
@@ -100,42 +273,50 @@ const button = document.getElementById("continueBtn");
 const ready = document.getElementById("readyText");
 const status = document.getElementById("status");
 
-progress.style.width = "0%";
 
 
-const timer = setInterval(function(){
-
-    time--;
-
-    countdown.innerHTML = time;
-
-    progress.style.width = ((10 - time) * 10) + "%";
+progress.style.width="0%";
 
 
-    if(time <= 0){
 
-        clearInterval(timer);
-
-
-        countdown.innerHTML = "✅";
+const timer=setInterval(function(){
 
 
-        status.innerHTML =
-        "✅ Verification completed successfully ⬇️ Continue to destination";
+time--;
 
 
-        ready.innerHTML =
-        "👇 Click Continue button";
+countdown.innerHTML=time;
 
 
-        button.disabled = false;
+progress.style.width=((10-time)*10)+"%";
 
-        button.innerHTML = "Continue";
 
-    }
+
+if(time<=0){
+
+
+clearInterval(timer);
+
+
+countdown.innerHTML="✅";
+
+
+status.innerHTML=
+"✅ Verification completed successfully ⬇️ Continue to destination";
+
+
+ready.innerHTML=
+"👇 Click Continue button";
+
+
+button.disabled=false;
+
+
+}
 
 
 },1000);
+
 
 
 </script>
@@ -143,4 +324,4 @@ const timer = setInterval(function(){
 
 </body>
 
-</html>
+    </html>
