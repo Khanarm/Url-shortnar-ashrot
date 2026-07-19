@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Please Wait...</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<section class="hero">
+
+    <div class="shortener-box">
+
+        <h1>⏳ Please Wait</h1>
+
+        <p>
+            Your destination is almost ready.
+        </p>
+
+        <h2 id="countdown">10</h2>
+
+        <br>
+
+        <a href="/go/{{ short_code }}">
+
+            <button id="continueBtn" disabled>
+                Continue
+            </button>
+
+        </a>
+
+    </div>
+
+</section>
+
+<script>
+
+let time = 10;
+
+const countdown = document.getElementById("countdown");
+const button = document.getElementById("continueBtn");
+
+const timer = setInterval(function(){
+
+    time--;
+
+    countdown.innerHTML = time;
+
+    if(time <= 0){
+
+        clearInterval(timer);
+
+        countdown.innerHTML = "✅ Ready";
+
+        button.disabled = false;
+
+        button.innerHTML = "Continue";
+
+    }
+
+},1000);
+
+</script>
+
+</body>
+
+</html>
