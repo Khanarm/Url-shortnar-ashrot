@@ -3,125 +3,258 @@
 
 <head>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Secure Link Verification</title>
+<title>Secure Link Verification</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet"
+href="{{ url_for('static', filename='css/style.css') }}">
 
 </head>
 
+
 <body>
 
-<section class="hero">
 
-    <div class="shortener-box">
+<!-- TOP AD PLACEHOLDER -->
+<div style="width:90%;max-width:728px;height:90px;margin:20px auto;text-align:center;">
 
-        <h1>🛡️ Secure Link Verification</h1>
-
-        <p id="status">
-            🕒 Preparing your destination. Please wait...
-        </p>
-
-        <h2 id="countdown">10</h2>
-
-        <div class="progress">
-            <div id="progressBar"></div>
-        </div>
-
-    </div>
-
-</section>
-
-
-<section class="features">
-
-    <div class="card">
-
-        <h2>🔒 Safe Browsing</h2>
-
-        <p>
-            Always verify the website before sharing personal information.
-        </p>
-
-    </div>
-
-    <div class="card">
-
-        <h2>⚡ Fast Redirect</h2>
-
-        <p>
-            Your destination will be available after verification.
-        </p>
-
-    </div>
-
-    <div class="card">
-
-        <h2>💡 Security Tip</h2>
-
-        <p>
-            Never share passwords or OTPs on unknown websites.
-        </p>
-
-    </div>
-
-</section>
-
-
-<section class="faq">
-
-    <h2 style="text-align:center;color:white;margin-bottom:25px;">
-        Frequently Asked Questions
-    </h2>
-
-    <div class="card">
-
-        <h3>Why do I need to wait?</h3>
-
-        <p>
-            We prepare and verify your destination before continuing.
-        </p>
-
-    </div>
-
-    <br>
-
-    <div class="card">
-
-        <h3>Is this link safe?</h3>
-
-        <p>
-            Always verify the destination before entering personal information.
-        </p>
-
-    </div>
-
-</section>
-
-
-<div style="width:90%;max-width:700px;margin:50px auto;text-align:center;">
-
-    <p id="readyText"></p>
-
-    <br>
-
-    <a href="/wait1/{{ short_code }}">
-
-    <button id="continueBtn" disabled>
-        Continue
-    </button>
-
-    </a>
+    <!-- Ad Banner Code Here -->
 
 </div>
 
 
+
+<section class="hero">
+
+<div class="shortener-box">
+
+<h1>🛡️ Secure Link Verification</h1>
+
+
+<p id="status">
+🕒 Preparing your destination. Please wait...
+</p>
+
+
+<h2 id="countdown">10</h2>
+
+
+<div class="progress">
+<div id="progressBar"></div>
+</div>
+
+
+</div>
+
+</section>
+
+
+
+
+<section class="faq">
+
+
+<h2 style="text-align:center;color:white;margin-bottom:25px;">
+🔐 Online Safety Guide
+</h2>
+
+
+
+<div class="card">
+
+<h3>🌐 Safe Browsing</h3>
+
+<p>
+Always verify websites before sharing personal information.
+Avoid opening suspicious links and use trusted sources while browsing online.
+</p>
+
+</div>
+
+
+<br>
+
+
+<div class="card">
+
+<h3>🔒 Protect Your Information</h3>
+
+<p>
+Never share your password, OTP, PIN or banking details with unknown people.
+Keep your accounts secure with strong passwords.
+</p>
+
+</div>
+
+
+<br>
+
+
+<div class="card">
+
+<h3>⚡ Link Verification Process</h3>
+
+<p>
+We prepare your destination link and provide a safer browsing experience
+before continuing.
+</p>
+
+</div>
+
+
+<br>
+
+
+<div class="card">
+
+<h3>📱 Digital Awareness</h3>
+
+<p>
+Stay updated about online safety practices and always think before clicking
+unknown links.
+</p>
+
+</div>
+
+
+
+</section>
+
+
+
+
+
+<!-- EXTRA CONTENT -->
+
+<section class="faq">
+
+
+<h2 style="text-align:center;color:white;margin-bottom:25px;">
+💡 Internet Safety Tips
+</h2>
+
+
+
+<div class="card">
+
+<h3>✅ Check Before You Click</h3>
+
+<p>
+Look carefully at website addresses and avoid links that look suspicious.
+</p>
+
+</div>
+
+
+<br>
+
+
+<div class="card">
+
+<h3>🛡️ Keep Accounts Safe</h3>
+
+<p>
+Use security features and avoid using the same password everywhere.
+</p>
+
+</div>
+
+
+<br>
+
+
+<div class="card">
+
+<h3>🚀 Smart Online Habits</h3>
+
+<p>
+Being careful online helps protect your personal data and digital identity.
+</p>
+
+</div>
+
+
+</section>
+
+
+
+
+
+<section class="faq">
+
+
+<h2 style="text-align:center;color:white;margin-bottom:25px;">
+❓ Frequently Asked Questions
+</h2>
+
+
+
+<div class="card">
+
+<h3>Why do I need to wait?</h3>
+
+<p>
+The verification process prepares your destination before continuing.
+</p>
+
+</div>
+
+
+<br>
+
+
+<div class="card">
+
+<h3>Is this link safe?</h3>
+
+<p>
+Always check the destination website before entering any personal details.
+</p>
+
+</div>
+
+
+</section>
+
+
+
+
+
+
+<div style="width:90%;max-width:700px;margin:50px auto;text-align:center;">
+
+
+<p id="readyText"></p>
+
+
+<br>
+
+
+<a href="/wait1/{{ short_code }}">
+
+
+<button id="continueBtn" disabled>
+Continue
+</button>
+
+
+</a>
+
+
+</div>
+
+
+
+
+
+
 <script>
 
+
 let time = 10;
+
 
 const countdown = document.getElementById("countdown");
 const progress = document.getElementById("progressBar");
@@ -129,35 +262,53 @@ const button = document.getElementById("continueBtn");
 const ready = document.getElementById("readyText");
 const status = document.getElementById("status");
 
+
 progress.style.width = "0%";
+
+
 
 const timer = setInterval(function(){
 
-    time--;
 
-    countdown.innerHTML = time;
+time--;
 
-    progress.style.width = ((10 - time) * 10) + "%";
 
-    if(time <= 0){
+countdown.innerHTML = time;
 
-        clearInterval(timer);
 
-        countdown.innerHTML = "✅";
+progress.style.width = ((10-time)*10)+"%";
 
-        status.innerHTML = "✅ Verification completed successfully  ⬇️ Please scroll below and click the Continue button.";
 
-        ready.innerHTML = "👇click continue button.";
 
-        button.disabled = false;
+if(time <= 0){
 
-        button.innerHTML = "Continue";
 
-    }
+clearInterval(timer);
+
+
+countdown.innerHTML="✅";
+
+
+status.innerHTML=
+"✅ Verification completed successfully ⬇️ Continue below";
+
+
+ready.innerHTML=
+"👇 Click Continue button";
+
+
+button.disabled=false;
+
+
+}
+
 
 },1000);
 
+
+
 </script>
+
 
 </body>
 
