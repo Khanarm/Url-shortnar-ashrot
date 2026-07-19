@@ -41,6 +41,26 @@
 
     <h2>Your Links</h2>
 
+    <form method="GET" action="/dashboard" style="margin:20px 0; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+
+        <input
+            type="text"
+            name="search"
+            placeholder="Search URL or Alias..."
+            value="{{ search }}">
+
+        <button type="submit">
+            Search
+        </button>
+
+        <a href="/dashboard">
+            <button type="button">
+                Clear
+            </button>
+        </a>
+
+    </form>
+
     <table>
 
         <tr>
@@ -66,15 +86,15 @@
 
             <td>
 
-    <button
-        type="button"
-        onclick="copyLink('{{ request.host_url }}{{ url.short_code }}')">
-        Copy
-    </button>
+                <button
+                    type="button"
+                    onclick="copyLink('{{ request.host_url }}{{ url.short_code }}')">
+                    Copy
+                </button>
 
-    <a href="/delete/{{ url.id }}">
-        Delete
-    </a>
+                <a href="/delete/{{ url.id }}">
+                    Delete
+                </a>
 
             </td>
 
@@ -89,4 +109,4 @@
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
 </body>
-</html>
+            </html>
