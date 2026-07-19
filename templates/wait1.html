@@ -1,1 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Secure Link Verification</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+
+<section class="hero">
+
+    <div class="shortener-box">
+
+        <h1>🛡️ Final Link Verification</h1>
+
+        <p id="status">
+            🕒 Preparing your destination. Please wait...
+        </p>
+
+        <h2 id="countdown">10</h2>
+
+        <div class="progress">
+            <div id="progressBar"></div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<section class="features">
+
+    <div class="card">
+
+        <h2>🔒 Secure Access</h2>
+
+        <p>
+            Your destination link is being verified.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>⚡ Almost Done</h2>
+
+        <p>
+            Please wait until verification completes.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>💡 Stay Safe</h2>
+
+        <p>
+            Avoid entering sensitive information on unknown websites.
+        </p>
+
+    </div>
+
+</section>
+
+
+<div style="width:90%;max-width:700px;margin:50px auto;text-align:center;">
+
+    <p id="readyText"></p>
+
+    <br>
+
+    <a href="/go/{{ short_code }}">
+
+        <button id="continueBtn" disabled>
+            Continue
+        </button>
+
+    </a>
+
+</div>
+
+
+<script>
+
+let time = 10;
+
+const countdown = document.getElementById("countdown");
+const progress = document.getElementById("progressBar");
+const button = document.getElementById("continueBtn");
+const ready = document.getElementById("readyText");
+const status = document.getElementById("status");
+
+progress.style.width = "0%";
+
+
+const timer = setInterval(function(){
+
+    time--;
+
+    countdown.innerHTML = time;
+
+    progress.style.width = ((10 - time) * 10) + "%";
+
+
+    if(time <= 0){
+
+        clearInterval(timer);
+
+
+        countdown.innerHTML = "✅";
+
+
+        status.innerHTML =
+        "✅ Verification completed successfully ⬇️ Continue to destination";
+
+
+        ready.innerHTML =
+        "👇 Click Continue button";
+
+
+        button.disabled = false;
+
+        button.innerHTML = "Continue";
+
+    }
+
+
+},1000);
+
+
+</script>
+
+
+</body>
+
+</html>
