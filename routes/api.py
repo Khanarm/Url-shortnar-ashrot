@@ -33,12 +33,21 @@ def shorten_api():
             "message": "URL missing"
         }), 400
 
-    original_url = data["url"]
-
+    original_url = data["url"].strip()
     alias = data.get("alias", "").strip()
 
     if alias:
-        code = f"{generate_code()}-{alias}"
+        # Check if alias already exists
+        exists = URL.query.filter_by(short_code=alias).first()
+
+        if exists:
+            return jsonify({
+                "success": False,
+                "message": "Alias already exists"
+            }), 400
+
+        code = alias
+
     else:
         code = generate_code()
 
@@ -53,7 +62,7 @@ def shorten_api():
     return jsonify({
         "success": True,
         "short_code": code,
-        "short_url": request.host_url + code
+        "short_url": request.host_url.rstrip("/") + "/" + code
     })
 
 
