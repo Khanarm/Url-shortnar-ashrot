@@ -1,13 +1,13 @@
-function copyLink(){
+function copyLink(button){
 
     let link = document.getElementById("shortLink");
-    let button = event.target;
 
     navigator.clipboard.writeText(link.value);
 
     button.innerHTML = "✅ Copied!";
 
-    setTimeout(()=>{
+
+    setTimeout(function(){
 
         button.innerHTML = "📋 Copy";
 
