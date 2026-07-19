@@ -1,21 +1,28 @@
 {% extends "base.html" %}
 
+
 {% block title %}
 Home - URL Shortener
 {% endblock %}
 
 
+
 {% block content %}
 
+
+
 <section class="hero">
+
 
     <h1>
         Shorten Your Long URLs
     </h1>
 
+
     <p>
         Fast, Secure and Reliable URL Shortener.
     </p>
+
 
 
     <div class="shortener-box">
@@ -31,11 +38,13 @@ Home - URL Shortener
             required>
 
 
+
             <input
             type="text"
             name="custom_alias"
             placeholder="Custom Alias (Optional)"
             maxlength="30">
+
 
 
             <button type="submit">
@@ -47,13 +56,15 @@ Home - URL Shortener
 
 
 
+
         {% if error %}
 
-        <div class="error">
+        <p class="error">
             {{ error }}
-        </div>
+        </p>
 
         {% endif %}
+
 
 
 
@@ -65,7 +76,7 @@ Home - URL Shortener
 
 
             <h3>
-                Your Short URL
+                🎉 Your Short URL
             </h3>
 
 
@@ -78,24 +89,19 @@ Home - URL Shortener
 
 
 
+
             <div class="buttons">
 
-                <button
-type="button"
-onclick="copyLink(this)">
-    📋 Copy
-</button>
 
                 <button
-type="button"
-onclick="generateQR()">
-    📱 QR Code
-</button>
-                <div class="qr-box">
-    <div id="qrCode"></div>
-</div>
-                
-                
+                type="button"
+                onclick="copyLink(this)">
+                    📋 Copy
+                </button>
+
+
+
+
                 <a href="{{ short_url }}" target="_blank">
 
                     <button type="button">
@@ -105,7 +111,26 @@ onclick="generateQR()">
                 </a>
 
 
+
+
+                <button
+                type="button"
+                onclick="generateQR()">
+                    📱 QR Code
+                </button>
+
+
             </div>
+
+
+
+
+            <div class="qr-box">
+
+                <div id="qrCode"></div>
+
+            </div>
+
 
 
         </div>
@@ -114,6 +139,7 @@ onclick="generateQR()">
         {% endif %}
 
 
+
     </div>
 
 
@@ -122,18 +148,24 @@ onclick="generateQR()">
 
 
 
-<section class="features">
+
+
+<section class="features" id="features">
+
 
 
     <div class="card">
+
 
         <h2>
             ⚡ Fast
         </h2>
 
+
         <p>
             Create short links instantly.
         </p>
+
 
     </div>
 
@@ -141,14 +173,17 @@ onclick="generateQR()">
 
 
     <div class="card">
+
 
         <h2>
             🔒 Secure
         </h2>
 
+
         <p>
-            Your links stay safe.
+            Your links stay safe and protected.
         </p>
+
 
     </div>
 
@@ -157,18 +192,104 @@ onclick="generateQR()">
 
     <div class="card">
 
+
         <h2>
             📊 Analytics
         </h2>
+
 
         <p>
             Track your link performance.
         </p>
 
+
     </div>
 
 
+
 </section>
+
+
+
+
+
+
+
+<section class="how" id="how">
+
+
+    <h2>
+        How It Works
+    </h2>
+
+
+
+
+    <div class="steps">
+
+
+
+        <div class="step-card">
+
+
+            <h3>
+                1️⃣ Paste URL
+            </h3>
+
+
+            <p>
+                Enter your long URL.
+            </p>
+
+
+        </div>
+
+
+
+
+
+        <div class="step-card">
+
+
+            <h3>
+                2️⃣ Shorten Link
+            </h3>
+
+
+            <p>
+                Generate your short link instantly.
+            </p>
+
+
+        </div>
+
+
+
+
+
+        <div class="step-card">
+
+
+            <h3>
+                3️⃣ Share & Track
+            </h3>
+
+
+            <p>
+                Share your link and track clicks.
+            </p>
+
+
+        </div>
+
+
+
+    </div>
+
+
+
+</section>
+
 
 
 {% endblock %}
