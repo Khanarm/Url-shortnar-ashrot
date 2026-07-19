@@ -51,3 +51,9 @@ def shorten_api():
         "short_code": code,
         "short_url": request.host_url + code
     })
+
+@api_bp.route("/test")
+def test_api():
+    return jsonify({
+        "status": "API working"
+    })
