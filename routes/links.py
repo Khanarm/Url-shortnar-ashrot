@@ -1,7 +1,6 @@
 from flask import Blueprint, redirect, render_template
 from database import db
 from models import URL
-from flask import render_template
 
 links_bp = Blueprint("links", __name__)
 
@@ -46,6 +45,12 @@ def go(short_code):
 
 @links_bp.route("/wait1/<short_code>")
 def wait1(short_code):
+
+    url = URL.query.filter_by(short_code=short_code).first()
+
+    if not url:
+        return "Link not found", 404
+
     return render_template(
         "wait1.html",
         short_code=short_code
