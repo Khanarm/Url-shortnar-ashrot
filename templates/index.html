@@ -37,15 +37,21 @@
 
         <form method="POST">
 
-            <input
-                type="url"
-                name="url"
-                placeholder="Paste your long URL here..."
-                required>
+    <input
+        type="url"
+        name="url"
+        placeholder="Paste your long URL here..."
+        required>
 
-            <button type="submit">
-                Shorten URL
-            </button>
+    <input
+        type="text"
+        name="custom_alias"
+        placeholder="Custom Alias (Optional)"
+        maxlength="30">
+
+    <button type="submit">
+        Shorten URL
+    </button>
 
         </form>
 
