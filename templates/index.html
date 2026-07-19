@@ -80,15 +80,13 @@ Home - URL Shortener
 
             <div class="buttons">
 
-
                 <button
-                type="button"
-                onclick="copyLink(document.getElementById('shortLink').value)">
-                    📋 Copy
-                </button>
-
-
-
+type="button"
+onclick="copyLink(this)">
+    📋 Copy
+</button>
+                
+                
                 <a href="{{ short_url }}" target="_blank">
 
                     <button type="button">
