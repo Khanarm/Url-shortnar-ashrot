@@ -21,26 +21,41 @@ def generate_code(length=6):
 def home():
 
     short_url = None
+    error = None
 
     if request.method == "POST":
 
         original_url = request.form.get("url")
+        custom_alias = request.form.get("custom_alias", "").strip()
 
         if original_url:
 
-            code = generate_code()
+            if custom_alias:
 
-            new_url = URL(
-                original_url=original_url,
-                short_code=code
-            )
+                # Check if alias already exists
+                if URL.query.filter_by(short_code=custom_alias).first():
+                    error = "This alias is already taken."
 
-            db.session.add(new_url)
-            db.session.commit()
+                else:
+                    code = custom_alias
 
-            short_url = request.host_url + code
+            else:
+                code = generate_code()
+
+            if error is None:
+
+                new_url = URL(
+                    original_url=original_url,
+                    short_code=code
+                )
+
+                db.session.add(new_url)
+                db.session.commit()
+
+                short_url = request.host_url + code
 
     return render_template(
         "index.html",
-        short_url=short_url
-  )
+        short_url=short_url,
+        error=error
+                )
