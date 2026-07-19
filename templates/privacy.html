@@ -1,69 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy</title>
+{% extends "base.html" %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
+{% block title %}
+Privacy Policy
+{% endblock %}
 
-<body>
 
-<nav class="navbar">
-    <div class="logo">URL Shortener</div>
-
-    <ul class="menu">
-        <li><a href="/">Home</a></li>
-        <li><a href="/dashboard">Dashboard</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/contact">Contact</a></li>
-        <li><a href="/privacy">Privacy</a></li>
-    </ul>
-</nav>
+{% block content %}
 
 <section class="hero">
 
-    <h1>Privacy Policy</h1>
+<h1>Privacy Policy</h1>
 
-    <div style="max-width:900px; margin:auto; text-align:left; line-height:1.8;">
 
-        <h2>Information We Collect</h2>
-        <p>
-            We may collect information such as shortened URLs,
-            click statistics, browser information and basic usage data.
-        </p>
+<div style="max-width:900px;margin:auto;text-align:left;line-height:1.8;">
 
-        <h2>How We Use Your Information</h2>
-        <p>
-            We use collected information to improve our services,
-            monitor performance and provide analytics.
-        </p>
 
-        <h2>Cookies</h2>
-        <p>
-            Our website may use cookies to improve user experience.
-        </p>
+<h2>Information We Collect</h2>
 
-        <h2>Third-Party Services</h2>
-        <p>
-            We may use trusted third-party services such as analytics
-            or advertising providers.
-        </p>
+<p>
+We may collect shortened URLs, click statistics and basic usage data.
+</p>
 
-        <h2>Contact</h2>
-        <p>
-            If you have any questions regarding this Privacy Policy,
-            please contact us through our Contact page.
-        </p>
 
-    </div>
+<h2>Use of Information</h2>
+
+<p>
+We use information to improve our service and user experience.
+</p>
+
+
+<h2>Cookies</h2>
+
+<p>
+Cookies may be used to improve website performance.
+</p>
+
+
+<h2>Contact</h2>
+
+<p>
+For any privacy questions, contact us through our Contact page.
+</p>
+
+
+</div>
 
 </section>
 
-<footer>
-    © 2026 URL Shortener. All Rights Reserved.
-</footer>
-
-</body>
-</html>
+{% endblock %}
