@@ -11,7 +11,10 @@ def generate_code(length=6):
     chars = string.ascii_letters + string.digits
 
     while True:
-        code = "".join(random.choice(chars) for _ in range(length))
+        code = "".join(
+            random.choice(chars)
+            for _ in range(length)
+        ) + "-alice"
 
         exists = URL.query.filter_by(short_code=code).first()
 
@@ -30,27 +33,24 @@ def shorten_api():
             "message": "URL missing"
         }), 400
 
-
     original_url = data["url"]
 
     code = generate_code()
-
 
     new_url = URL(
         original_url=original_url,
         short_code=code
     )
 
-
     db.session.add(new_url)
     db.session.commit()
-
 
     return jsonify({
         "success": True,
         "short_code": code,
         "short_url": request.host_url + code
     })
+
 
 @api_bp.route("/test")
 def test_api():
