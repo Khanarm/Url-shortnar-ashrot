@@ -1,27 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us</title>
+{% extends "base.html" %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
+{% block title %}
+About - URL Shortener
+{% endblock %}
 
-<body>
 
-<nav class="navbar">
-    <div class="logo">
-        URL Shortener
-    </div>
-
-    <ul class="menu">
-        <li><a href="/">Home</a></li>
-        <li><a href="/dashboard">Dashboard</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/contact">Contact</a></li>
-    </ul>
-</nav>
+{% block content %}
 
 <section class="hero">
 
@@ -29,28 +13,17 @@
 
     <p style="max-width:800px; margin:auto; line-height:1.8;">
 
-        URL Shortener is a fast, secure and reliable platform that helps you
-        convert long URLs into short, easy-to-share links.
+        URL Shortener is a fast, secure and reliable platform
+        that helps you convert long URLs into short and easy-to-share links.
 
         <br><br>
 
-        Our goal is to provide a simple and powerful URL shortening service
-        with features like custom aliases, click analytics, dashboard management,
-        search, and more.
-
-        <br><br>
-
-        Thank you for using our platform.
+        Our goal is to provide a simple URL management platform
+        with features like custom aliases, dashboard management
+        and click tracking.
 
     </p>
 
 </section>
 
-<footer>
-
-    © 2026 URL Shortener. All Rights Reserved.
-
-</footer>
-
-</body>
-</html>
+{% endblock %}
