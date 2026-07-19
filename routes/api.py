@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from database import db
+raise Exception("NEW API.PY LOADED")
 from models import URL
 import random
 import string
