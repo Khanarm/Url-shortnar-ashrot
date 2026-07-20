@@ -11,13 +11,8 @@ def generate_code(length=6):
     chars = string.ascii_letters + string.digits
 
     while True:
-        code = "".join(
-            random.choice(chars)
-            for _ in range(length)
-        )
-
+        code = "".join(random.choice(chars) for _ in range(length))
         exists = URL.query.filter_by(short_code=code).first()
-
         if not exists:
             return code
 
@@ -25,74 +20,92 @@ def generate_code(length=6):
 @api_bp.route("/shorten", methods=["POST"])
 def shorten_api():
 
-    print("=" * 60)
-    print("NEW API REQUEST")
-
     data = request.get_json()
-    print("REQUEST DATA:", data)
 
-    if not data or "url" not in data:
-        print("ERROR: URL missing")
+    if not data:
         return jsonify({
             "success": False,
-            "message": "URL missing"
+            "message": "No data received"
         }), 400
 
-    original_url = data["url"].strip()
-    alias = data.get("alias", "").strip()
+    # Single URL
+    if "url" in data:
 
-    print("ORIGINAL URL:", original_url)
-    print("ALIAS:", alias)
+        original_url = data["url"].strip()
+        alias = data.get("alias", "").strip()
 
-    if alias:
-        print("CHECKING ALIAS...")
+        if alias:
+            exists = URL.query.filter_by(short_code=alias).first()
+            if exists:
+                return jsonify({
+                    "success": False,
+                    "message": "Alias already exists"
+                }), 400
+            code = alias
+        else:
+            code = generate_code()
 
-        exists = URL.query.filter_by(short_code=alias).first()
+        new_url = URL(
+            original_url=original_url,
+            short_code=code
+        )
 
-        print("ALIAS EXISTS:", exists)
+        db.session.add(new_url)
+        db.session.commit()
 
-        if exists:
-            print("ALIAS ALREADY EXISTS")
+        short_url = request.host_url.rstrip("/") + "/" + code
 
+        return jsonify({
+            "success": True,
+            "short_code": code,
+            "short_url": short_url
+        })
+
+    # Multiple URLs
+    elif "urls" in data:
+
+        urls = data["urls"]
+
+        if not isinstance(urls, list):
             return jsonify({
                 "success": False,
-                "message": "Alias already exists"
+                "message": "urls must be a list"
             }), 400
 
-        code = alias
-        print("USING CUSTOM ALIAS:", code)
+        results = []
 
-    else:
-        print("NO ALIAS, GENERATING RANDOM CODE")
-        code = generate_code()
+        for original_url in urls:
+            code = generate_code()
 
-    print("FINAL SHORT CODE:", code)
+            new_url = URL(
+                original_url=original_url.strip(),
+                short_code=code
+            )
 
-    new_url = URL(
-        original_url=original_url,
-        short_code=code
-    )
+            db.session.add(new_url)
 
-    print("ADDING TO DATABASE...")
-    db.session.add(new_url)
-    db.session.commit()
-    print("DATABASE COMMIT SUCCESS")
+            results.append({
+                "original_url": original_url,
+                "short_code": code,
+                "short_url": request.host_url.rstrip("/") + "/" + code
+            })
 
-    short_url = request.host_url.rstrip("/") + "/" + code
+        db.session.commit()
 
-    print("RETURN SHORT URL:", short_url)
-    print("=" * 60)
+        return jsonify({
+            "success": True,
+            "count": len(results),
+            "results": results
+        })
 
     return jsonify({
-        "success": True,
-        "short_code": code,
-        "short_url": short_url
-    })
+        "success": False,
+        "message": "url or urls field required"
+    }), 400
 
 
 @api_bp.route("/test")
 def test_api():
-    print("TEST API CALLED")
     return jsonify({
         "status": "API working"
     })
