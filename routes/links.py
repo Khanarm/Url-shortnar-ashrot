@@ -6,7 +6,8 @@ links_bp = Blueprint("links", __name__)
 
 
 @links_bp.route("/<short_code>")
-def redirect_url(short_code):
+@links_bp.route("/<short_code>/<alias>")
+def redirect_url(short_code, alias=None):
 
     url = URL.query.filter_by(short_code=short_code).first()
 
@@ -42,6 +43,7 @@ def go(short_code):
     db.session.commit()
 
     return redirect(url.original_url)
+
 
 @links_bp.route("/wait1/<short_code>")
 def wait1(short_code):
