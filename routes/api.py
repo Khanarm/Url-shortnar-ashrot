@@ -28,7 +28,12 @@ def shorten_api():
             "message": "No data received"
         }), 400
 
+    # Default suffix
+    suffix = data.get("suffix", "ckdrama").strip()
+
+    # =========================
     # Single URL
+    # =========================
     if "url" in data:
 
         original_url = data["url"].strip()
@@ -36,12 +41,15 @@ def shorten_api():
 
         if alias:
             exists = URL.query.filter_by(short_code=alias).first()
+
             if exists:
                 return jsonify({
                     "success": False,
                     "message": "Alias already exists"
                 }), 400
+
             code = alias
+
         else:
             code = generate_code()
 
@@ -53,7 +61,13 @@ def shorten_api():
         db.session.add(new_url)
         db.session.commit()
 
-        short_url = request.host_url.rstrip("/") + "/" + code
+        short_url = (
+            request.host_url.rstrip("/")
+            + "/"
+            + code
+            + "/"
+            + suffix
+        )
 
         return jsonify({
             "success": True,
@@ -61,7 +75,9 @@ def shorten_api():
             "short_url": short_url
         })
 
+    # =========================
     # Multiple URLs
+    # =========================
     elif "urls" in data:
 
         urls = data["urls"]
@@ -75,6 +91,7 @@ def shorten_api():
         results = []
 
         for original_url in urls:
+
             code = generate_code()
 
             new_url = URL(
@@ -87,7 +104,13 @@ def shorten_api():
             results.append({
                 "original_url": original_url,
                 "short_code": code,
-                "short_url": request.host_url.rstrip("/") + "/" + code
+                "short_url": (
+                    request.host_url.rstrip("/")
+                    + "/"
+                    + code
+                    + "/"
+                    + suffix
+                )
             })
 
         db.session.commit()
