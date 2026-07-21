@@ -1,3 +1,8 @@
-from flask_sqlalchemy import SQLAlchemy
+from pymongo import MongoClient
+from config import Config
 
-db = SQLAlchemy()
+client = MongoClient(Config.MONGO_URI)
+
+db = client["url_shortener"]
+
+urls = db["urls"]
