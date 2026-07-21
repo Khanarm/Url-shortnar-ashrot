@@ -1,19 +1,22 @@
 from flask import Flask, render_template
 from config import Config
-from database import db
 
 from routes.home import home_bp
 from routes.dashboard import dashboard_bp
 from routes.links import links_bp
 from routes.api import api_bp
 
+from mongo import client
+
 app = Flask(__name__)
 app.config.from_object(Config)
 
-db.init_app(app)
-
-with app.app_context():
-    db.create_all()
+# MongoDB Connection Test
+try:
+    client.admin.command("ping")
+    print("✅ MongoDB Connected Successfully")
+except Exception as e:
+    print("❌ MongoDB Connection Failed:", e)
 
 # Register Blueprints
 app.register_blueprint(home_bp)
@@ -28,9 +31,10 @@ def page_not_found(error):
     return render_template("404.html"), 404
 
 
-if __name__ == "__main__":
-    app.run(debug=True)
-
 @app.route("/test")
 def test():
     return "Working"
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
