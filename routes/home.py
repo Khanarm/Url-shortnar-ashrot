@@ -41,7 +41,7 @@ def home():
 
             if custom_alias:
 
-                code = custom_alias + "-alice"
+                code = custom_alias + "-ckdrama"
 
                 if urls.find_one({"short_code": code}):
 
