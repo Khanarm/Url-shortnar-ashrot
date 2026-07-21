@@ -5,7 +5,7 @@ class Config:
 
     MONGO_URI = os.getenv(
         "MONGO_URI",
-        "mongodb+srv://USERNAME:PASSWORD@cluster0.xxxxx.mongodb.net/url_shortener?retryWrites=true&w=majority"
+        "mongodb+srv://ahadansaridmk_db_user:575751an@cluster0.its13au.mongodb.net/?appName=Cluster0"
     )
 
     BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:5000")
