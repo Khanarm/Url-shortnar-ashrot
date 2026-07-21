@@ -644,3 +644,11 @@ button:disabled{
     margin-top:20px;
 
 }
+
+.backup-info{
+    display:block;
+    margin-top:6px;
+    margin-bottom:15px;
+    color:#b8c1d1;
+    font-size:13px;
+}
