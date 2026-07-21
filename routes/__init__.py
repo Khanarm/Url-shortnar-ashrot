@@ -1,6 +1,6 @@
-from flask import Blueprint, redirect, request, url_for
-from database import db
-from models import URL
+from flask import Blueprint, redirect, url_for
+from bson import ObjectId
+from database import urls
 
 links_bp = Blueprint("links", __name__)
 
@@ -8,23 +8,22 @@ links_bp = Blueprint("links", __name__)
 @links_bp.route("/<short_code>")
 def redirect_url(short_code):
 
-    url = URL.query.filter_by(short_code=short_code).first()
+    url = urls.find_one({"short_code": short_code})
 
     if not url:
         return "Link not found", 404
 
-    url.clicks += 1
-    db.session.commit()
+    urls.update_one(
+        {"_id": url["_id"]},
+        {"$inc": {"clicks": 1}}
+    )
 
-    return redirect(url.original_url)
+    return redirect(url["original_url"])
 
 
-@links_bp.route("/delete/<int:url_id>", methods=["POST"])
+@links_bp.route("/delete/<url_id>", methods=["POST"])
 def delete_link(url_id):
 
-    url = URL.query.get_or_404(url_id)
-
-    db.session.delete(url)
-    db.session.commit()
+    urls.delete_one({"_id": ObjectId(url_id)})
 
     return redirect(url_for("dashboard.dashboard"))
