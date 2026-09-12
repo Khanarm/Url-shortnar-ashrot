@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>Login - aShort</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}">
+
 </head>
 
 <body>
@@ -18,35 +25,59 @@
 
         <h1>🔐 Login</h1>
 
+
+        <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
-            {% for category, message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <p class="{{ category }}">
+                        {{ message }}
+                    </p>
+
+                {% endfor %}
+
+            {% endif %}
+
         {% endwith %}
 
+
+        <!-- Login Form -->
         <form method="POST">
 
+            <!-- Username -->
             <input
                 type="text"
                 name="username"
                 placeholder="Username"
+                autocomplete="username"
                 required>
 
+
+            <!-- Password -->
             <input
                 type="password"
                 name="password"
                 placeholder="Password"
+                autocomplete="current-password"
                 required>
 
+
+            <!-- Login Button -->
             <button type="submit">
                 Login
             </button>
 
         </form>
 
+
+        <!-- Register -->
         <p>
             Don't have an account?
-            <a href="/auth/register">
+
+            <a href="{{ url_for('auth.register') }}">
                 Register
             </a>
         </p>
@@ -56,4 +87,5 @@
 </section>
 
 </body>
+
 </html>
