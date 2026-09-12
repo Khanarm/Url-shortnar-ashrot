@@ -1,8 +1,11 @@
 from pymongo import MongoClient
 from config import Config
 
+
 client = MongoClient(Config.MONGO_URI)
 
 db = client["url_shortener"]
 
 urls = db["urls"]
+users = db["users"]
+withdrawals = db["withdrawals"]
