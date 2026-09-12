@@ -1,6 +1,25 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from database import urls
+from flask import (
+    Blueprint,
+    render_template,
+    redirect,
+    url_for,
+    request,
+    flash
+)
+
+from database import (
+    users,
+    withdrawals
+)
+
+from auth import login_required, get_current_user
+
+from config import Config
+
+from datetime import datetime
+
 from bson import ObjectId
+
 
 dashboard_bp = Blueprint(
     "dashboard",
@@ -9,90 +28,184 @@ dashboard_bp = Blueprint(
 
 
 @dashboard_bp.route("/dashboard")
+@login_required
 def dashboard():
 
-    search = request.args.get("search", "").strip()
-    page = request.args.get("page", 1, type=int)
+    user = get_current_user()
 
-    per_page = 30
+    if not user:
 
-    query = {}
+        return redirect(
+            url_for("auth.login")
+        )
 
-    if search:
-        query = {
-            "$or": [
-                {
-                    "original_url": {
-                        "$regex": search,
-                        "$options": "i"
-                    }
-                },
-                {
-                    "short_code": {
-                        "$regex": search,
-                        "$options": "i"
-                    }
-                },
-                {
-                    "alias": {
-                        "$regex": search,
-                        "$options": "i"
-                    }
-                },
-                {
-                    "backup_tag": {
-                        "$regex": search,
-                        "$options": "i"
-                    }
+    today = datetime.utcnow().strftime(
+        "%Y-%m-%d"
+    )
+
+    last_date = user.get(
+        "last_earning_date"
+    )
+
+    today_earning = float(
+        user.get("today_earning", 0)
+    )
+
+    # Reset today's earning when a new day starts
+    if last_date != today:
+
+        users.update_one(
+            {"_id": user["_id"]},
+            {
+                "$set": {
+                    "today_earning": 0.0,
+                    "last_earning_date": today
                 }
-            ]
-        }
+            }
+        )
 
-    total_links = urls.count_documents(query)
+        today_earning = 0.0
 
-    total_clicks = 0
+        user["today_earning"] = 0.0
 
-    for item in urls.find(query):
-        total_clicks += item.get("clicks", 0)
-
-    total_pages = (
-        (total_links + per_page - 1)
-        // per_page
+    history = list(
+        withdrawals.find({
+            "user_id": str(user["_id"])
+        })
+        .sort(
+            "created_at",
+            -1
+        )
+        .limit(20)
     )
-
-    data = list(
-        urls.find(query)
-        .sort("created_at", -1)
-        .skip((page - 1) * per_page)
-        .limit(per_page)
-    )
-
-    pagination = {
-        "page": page,
-        "pages": total_pages,
-        "has_prev": page > 1,
-        "has_next": page < total_pages,
-        "prev_num": page - 1,
-        "next_num": page + 1
-    }
 
     return render_template(
         "dashboard.html",
-        urls=data,
-        total_links=total_links,
-        total_clicks=total_clicks,
-        search=search,
-        pagination=pagination
+        user=user,
+        today_earning=today_earning,
+        min_withdraw=Config.MIN_WITHDRAW_USDT,
+        history=history
     )
 
 
-@dashboard_bp.route("/delete/<id>")
-def delete_url(id):
+@dashboard_bp.route(
+    "/withdraw",
+    methods=["POST"]
+)
+@login_required
+def withdraw():
 
-    urls.delete_one(
+    user = get_current_user()
+
+    try:
+
+        amount = float(
+            request.form.get(
+                "amount",
+                "0"
+            )
+        )
+
+    except ValueError:
+
+        amount = 0
+
+    wallet = request.form.get(
+        "wallet",
+        ""
+    ).strip()
+
+    network = request.form.get(
+        "network",
+        "TRC20"
+    ).strip().upper()
+
+    if amount <= 0:
+
+        flash(
+            "Invalid withdrawal amount.",
+            "error"
+        )
+
+        return redirect(
+            url_for("dashboard.dashboard")
+        )
+
+    if amount < Config.MIN_WITHDRAW_USDT:
+
+        flash(
+            f"Minimum withdrawal is {Config.MIN_WITHDRAW_USDT} USDT.",
+            "error"
+        )
+
+        return redirect(
+            url_for("dashboard.dashboard")
+        )
+
+    if not wallet:
+
+        flash(
+            "Wallet address is required.",
+            "error"
+        )
+
+        return redirect(
+            url_for("dashboard.dashboard")
+        )
+
+    # Atomic balance deduction.
+    # This prevents double withdrawal.
+    result = users.update_one(
         {
-            "_id": ObjectId(id)
+            "_id": user["_id"],
+            "available_balance": {
+                "$gte": amount
+            }
+        },
+        {
+            "$inc": {
+                "available_balance": -amount
+            }
         }
+    )
+
+    if result.modified_count != 1:
+
+        flash(
+            "Insufficient available balance.",
+            "error"
+        )
+
+        return redirect(
+            url_for("dashboard.dashboard")
+        )
+
+    withdrawals.insert_one({
+
+        "user_id": str(user["_id"]),
+
+        "username": user.get(
+            "username",
+            ""
+        ),
+
+        "amount": amount,
+
+        "wallet": wallet,
+
+        "network": network,
+
+        "status": "PENDING",
+
+        "created_at": datetime.utcnow(),
+
+        "processed_at": None
+
+    })
+
+    flash(
+        "Withdrawal request submitted.",
+        "success"
     )
 
     return redirect(
