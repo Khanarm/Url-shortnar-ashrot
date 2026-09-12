@@ -20,8 +20,13 @@ from bson.errors import InvalidId
 
 import secrets
 import re
-from datetime import datetime
+from datetime import datetime, timezone
+from functools import wraps
 
+
+# =========================================================
+# AUTH BLUEPRINT
+# =========================================================
 
 auth_bp = Blueprint(
     "auth",
@@ -59,20 +64,33 @@ def get_current_user():
     if not user_id:
         return None
 
-    # Convert session string back to MongoDB ObjectId
-    try:
+    # Already ObjectId
+    if isinstance(user_id, ObjectId):
+        object_id = user_id
 
-        object_id = ObjectId(user_id)
+    else:
 
-    except (InvalidId, TypeError):
+        try:
+            object_id = ObjectId(str(user_id))
 
-        session.pop("user_id", None)
+        except (InvalidId, TypeError, ValueError):
 
-        return None
+            session.pop("user_id", None)
+            session.pop("username", None)
+
+            return None
 
     user = users.find_one({
         "_id": object_id
     })
+
+    # User no longer exists
+    if not user:
+
+        session.pop("user_id", None)
+        session.pop("username", None)
+
+        return None
 
     return user
 
@@ -83,8 +101,6 @@ def get_current_user():
 
 def login_required(func):
 
-    from functools import wraps
-
     @wraps(func)
     def wrapper(*args, **kwargs):
 
@@ -93,15 +109,16 @@ def login_required(func):
         if not user:
 
             session.pop("user_id", None)
+            session.pop("username", None)
 
             return redirect(
                 url_for(
                     "auth.login",
-                    next=request.path
+                    next=request.full_path
                 )
             )
 
-        # Blocked user cannot access dashboard
+        # Blocked user
         if user.get("blocked", False):
 
             session.clear()
@@ -125,8 +142,6 @@ def login_required(func):
 # =========================================================
 
 def admin_required(func):
-
-    from functools import wraps
 
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -166,19 +181,24 @@ def register():
             ""
         ).strip().lower()
 
+        email = request.form.get(
+            "email",
+            ""
+        ).strip().lower()
+
         password = request.form.get(
             "password",
             ""
         )
 
-        # -----------------------------------------
-        # Validation
-        # -----------------------------------------
+        # -------------------------------------------------
+        # REQUIRED FIELDS
+        # -------------------------------------------------
 
-        if not username or not password:
+        if not username or not email or not password:
 
             flash(
-                "Username and password are required.",
+                "Username, Gmail ID and password are required.",
                 "error"
             )
 
@@ -186,19 +206,45 @@ def register():
                 url_for("auth.register")
             )
 
-        if not re.match(
-            r"^[a-zA-Z0-9_]{3,30}$",
+        # -------------------------------------------------
+        # USERNAME VALIDATION
+        # -------------------------------------------------
+
+        if not re.fullmatch(
+            r"[a-z0-9_]{3,30}",
             username
         ):
 
             flash(
-                "Username must contain only letters, numbers and underscore.",
+                "Username must be 3-30 characters and contain only letters, numbers and underscore.",
                 "error"
             )
 
             return redirect(
                 url_for("auth.register")
             )
+
+        # -------------------------------------------------
+        # GMAIL VALIDATION
+        # -------------------------------------------------
+
+        if not re.fullmatch(
+            r"[a-z0-9._%+-]+@gmail\.com",
+            email
+        ):
+
+            flash(
+                "Please enter a valid Gmail ID.",
+                "error"
+            )
+
+            return redirect(
+                url_for("auth.register")
+            )
+
+        # -------------------------------------------------
+        # PASSWORD VALIDATION
+        # -------------------------------------------------
 
         if len(password) < 6:
 
@@ -211,15 +257,15 @@ def register():
                 url_for("auth.register")
             )
 
-        # -----------------------------------------
-        # Check existing username
-        # -----------------------------------------
+        # -------------------------------------------------
+        # CHECK USERNAME
+        # -------------------------------------------------
 
-        existing_user = users.find_one({
+        existing_username = users.find_one({
             "username": username
         })
 
-        if existing_user:
+        if existing_username:
 
             flash(
                 "Username already exists.",
@@ -230,25 +276,46 @@ def register():
                 url_for("auth.register")
             )
 
-        # -----------------------------------------
-        # Generate API key
-        # -----------------------------------------
+        # -------------------------------------------------
+        # CHECK EMAIL
+        # -------------------------------------------------
+
+        existing_email = users.find_one({
+            "email": email
+        })
+
+        if existing_email:
+
+            flash(
+                "This Gmail ID is already registered.",
+                "error"
+            )
+
+            return redirect(
+                url_for("auth.register")
+            )
+
+        # -------------------------------------------------
+        # GENERATE API KEY
+        # -------------------------------------------------
 
         api_key = generate_api_key()
 
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         today = now.strftime(
             "%Y-%m-%d"
         )
 
-        # -----------------------------------------
-        # Create user
-        # -----------------------------------------
+        # -------------------------------------------------
+        # CREATE USER
+        # -------------------------------------------------
 
         user = {
 
             "username": username,
+
+            "email": email,
 
             "password": generate_password_hash(
                 password
@@ -256,25 +323,38 @@ def register():
 
             "api_key": api_key,
 
-            # Earning
+            # ---------------------------------------------
+            # EARNING
+            # ---------------------------------------------
+
             "today_earning": 0.0,
 
             "total_earning": 0.0,
 
             "available_balance": 0.0,
 
-            # Withdrawal
+            # ---------------------------------------------
+            # WITHDRAWAL
+            # ---------------------------------------------
+
             "total_withdrawals": 0,
 
             "total_withdrawn": 0.0,
 
-            # Account
+            # ---------------------------------------------
+            # ACCOUNT
+            # ---------------------------------------------
+
             "blocked": False,
 
             "created_at": now,
 
             "last_earning_date": today
         }
+
+        # -------------------------------------------------
+        # INSERT INTO MONGODB
+        # -------------------------------------------------
 
         try:
 
@@ -284,7 +364,7 @@ def register():
 
             print(
                 "Registration database error:",
-                e
+                repr(e)
             )
 
             flash(
@@ -296,16 +376,28 @@ def register():
                 url_for("auth.register")
             )
 
-        # -----------------------------------------
-        # Login newly registered user
-        # -----------------------------------------
+        # -------------------------------------------------
+        # LOGIN NEW USER
+        # -------------------------------------------------
 
         session.clear()
 
-        # Store ObjectId as string in session
+        # IMPORTANT:
+        # MongoDB ObjectId is converted to string
+        # before storing inside Flask session.
+
         session["user_id"] = str(
             result.inserted_id
         )
+
+        session["username"] = username
+
+        # Make session permanent for this browser
+        session.permanent = True
+
+        # -------------------------------------------------
+        # DASHBOARD
+        # -------------------------------------------------
 
         return redirect(
             url_for("dashboard.dashboard")
@@ -345,9 +437,24 @@ def login():
             ""
         )
 
-        # -----------------------------------------
-        # Find user
-        # -----------------------------------------
+        # -------------------------------------------------
+        # REQUIRED
+        # -------------------------------------------------
+
+        if not username or not password:
+
+            flash(
+                "Username and password are required.",
+                "error"
+            )
+
+            return redirect(
+                url_for("auth.login")
+            )
+
+        # -------------------------------------------------
+        # FIND USER
+        # -------------------------------------------------
 
         user = users.find_one({
             "username": username
@@ -364,19 +471,43 @@ def login():
                 url_for("auth.login")
             )
 
-        # -----------------------------------------
-        # Check password
-        # -----------------------------------------
+        # -------------------------------------------------
+        # PASSWORD
+        # -------------------------------------------------
 
         stored_password = user.get(
             "password",
             ""
         )
 
-        if not check_password_hash(
-            stored_password,
-            password
-        ):
+        if not stored_password:
+
+            flash(
+                "Account password is not configured.",
+                "error"
+            )
+
+            return redirect(
+                url_for("auth.login")
+            )
+
+        try:
+
+            password_correct = check_password_hash(
+                stored_password,
+                password
+            )
+
+        except Exception as e:
+
+            print(
+                "Password verification error:",
+                repr(e)
+            )
+
+            password_correct = False
+
+        if not password_correct:
 
             flash(
                 "Invalid username or password.",
@@ -387,9 +518,9 @@ def login():
                 url_for("auth.login")
             )
 
-        # -----------------------------------------
-        # Check blocked status
-        # -----------------------------------------
+        # -------------------------------------------------
+        # BLOCKED USER
+        # -------------------------------------------------
 
         if user.get(
             "blocked",
@@ -405,9 +536,9 @@ def login():
                 url_for("auth.login")
             )
 
-        # -----------------------------------------
-        # Create session
-        # -----------------------------------------
+        # -------------------------------------------------
+        # CREATE SESSION
+        # -------------------------------------------------
 
         session.clear()
 
@@ -415,11 +546,16 @@ def login():
             user["_id"]
         )
 
-        # Optional username session
         session["username"] = user.get(
             "username",
             ""
         )
+
+        session.permanent = True
+
+        # -------------------------------------------------
+        # DASHBOARD
+        # -------------------------------------------------
 
         return redirect(
             url_for("dashboard.dashboard")
@@ -434,7 +570,9 @@ def login():
 # LOGOUT
 # =========================================================
 
-@auth_bp.route("/logout")
+@auth_bp.route(
+    "/logout"
+)
 def logout():
 
     session.clear()
