@@ -15,6 +15,9 @@ from werkzeug.security import (
 
 from database import users
 
+from bson import ObjectId
+from bson.errors import InvalidId
+
 import secrets
 import re
 from datetime import datetime
@@ -27,20 +30,134 @@ auth_bp = Blueprint(
 )
 
 
+# =========================================================
+# API KEY GENERATOR
+# =========================================================
+
 def generate_api_key():
 
     while True:
 
         key = "ask_" + secrets.token_urlsafe(32)
 
-        if not users.find_one({
+        existing = users.find_one({
             "api_key": key
-        }):
+        })
+
+        if not existing:
             return key
 
 
-@auth_bp.route("/register", methods=["GET", "POST"])
+# =========================================================
+# GET CURRENT USER
+# =========================================================
+
+def get_current_user():
+
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return None
+
+    # Convert session string back to MongoDB ObjectId
+    try:
+
+        object_id = ObjectId(user_id)
+
+    except (InvalidId, TypeError):
+
+        session.pop("user_id", None)
+
+        return None
+
+    user = users.find_one({
+        "_id": object_id
+    })
+
+    return user
+
+
+# =========================================================
+# LOGIN REQUIRED
+# =========================================================
+
+def login_required(func):
+
+    from functools import wraps
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+
+        user = get_current_user()
+
+        if not user:
+
+            session.pop("user_id", None)
+
+            return redirect(
+                url_for(
+                    "auth.login",
+                    next=request.path
+                )
+            )
+
+        # Blocked user cannot access dashboard
+        if user.get("blocked", False):
+
+            session.clear()
+
+            flash(
+                "Your account has been blocked.",
+                "error"
+            )
+
+            return redirect(
+                url_for("auth.login")
+            )
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+# =========================================================
+# ADMIN REQUIRED
+# =========================================================
+
+def admin_required(func):
+
+    from functools import wraps
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+
+        if not session.get("admin"):
+
+            return redirect(
+                url_for("admin.login")
+            )
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+# =========================================================
+# REGISTER
+# =========================================================
+
+@auth_bp.route(
+    "/register",
+    methods=["GET", "POST"]
+)
 def register():
+
+    # Already logged in
+    if get_current_user():
+
+        return redirect(
+            url_for("dashboard.dashboard")
+        )
 
     if request.method == "POST":
 
@@ -53,6 +170,10 @@ def register():
             "password",
             ""
         )
+
+        # -----------------------------------------
+        # Validation
+        # -----------------------------------------
 
         if not username or not password:
 
@@ -71,7 +192,7 @@ def register():
         ):
 
             flash(
-                "Username can contain only letters, numbers and underscore.",
+                "Username must contain only letters, numbers and underscore.",
                 "error"
             )
 
@@ -90,9 +211,15 @@ def register():
                 url_for("auth.register")
             )
 
-        if users.find_one({
+        # -----------------------------------------
+        # Check existing username
+        # -----------------------------------------
+
+        existing_user = users.find_one({
             "username": username
-        }):
+        })
+
+        if existing_user:
 
             flash(
                 "Username already exists.",
@@ -103,6 +230,22 @@ def register():
                 url_for("auth.register")
             )
 
+        # -----------------------------------------
+        # Generate API key
+        # -----------------------------------------
+
+        api_key = generate_api_key()
+
+        now = datetime.utcnow()
+
+        today = now.strftime(
+            "%Y-%m-%d"
+        )
+
+        # -----------------------------------------
+        # Create user
+        # -----------------------------------------
+
         user = {
 
             "username": username,
@@ -111,29 +254,55 @@ def register():
                 password
             ),
 
-            "api_key": generate_api_key(),
+            "api_key": api_key,
 
+            # Earning
             "today_earning": 0.0,
 
             "total_earning": 0.0,
 
             "available_balance": 0.0,
 
+            # Withdrawal
             "total_withdrawals": 0,
 
             "total_withdrawn": 0.0,
 
-            "created_at": datetime.utcnow(),
+            # Account
+            "blocked": False,
 
-            "last_earning_date": datetime.utcnow().strftime(
-                "%Y-%m-%d"
-            )
+            "created_at": now,
+
+            "last_earning_date": today
         }
 
-        result = users.insert_one(user)
+        try:
+
+            result = users.insert_one(user)
+
+        except Exception as e:
+
+            print(
+                "Registration database error:",
+                e
+            )
+
+            flash(
+                "Unable to create account. Please try again.",
+                "error"
+            )
+
+            return redirect(
+                url_for("auth.register")
+            )
+
+        # -----------------------------------------
+        # Login newly registered user
+        # -----------------------------------------
 
         session.clear()
 
+        # Store ObjectId as string in session
         session["user_id"] = str(
             result.inserted_id
         )
@@ -147,8 +316,22 @@ def register():
     )
 
 
-@auth_bp.route("/login", methods=["GET", "POST"])
+# =========================================================
+# LOGIN
+# =========================================================
+
+@auth_bp.route(
+    "/login",
+    methods=["GET", "POST"]
+)
 def login():
+
+    # Already logged in
+    if get_current_user():
+
+        return redirect(
+            url_for("dashboard.dashboard")
+        )
 
     if request.method == "POST":
 
@@ -162,12 +345,36 @@ def login():
             ""
         )
 
+        # -----------------------------------------
+        # Find user
+        # -----------------------------------------
+
         user = users.find_one({
             "username": username
         })
 
-        if not user or not check_password_hash(
-            user["password"],
+        if not user:
+
+            flash(
+                "Invalid username or password.",
+                "error"
+            )
+
+            return redirect(
+                url_for("auth.login")
+            )
+
+        # -----------------------------------------
+        # Check password
+        # -----------------------------------------
+
+        stored_password = user.get(
+            "password",
+            ""
+        )
+
+        if not check_password_hash(
+            stored_password,
             password
         ):
 
@@ -180,7 +387,14 @@ def login():
                 url_for("auth.login")
             )
 
-        if user.get("blocked", False):
+        # -----------------------------------------
+        # Check blocked status
+        # -----------------------------------------
+
+        if user.get(
+            "blocked",
+            False
+        ):
 
             flash(
                 "Your account has been blocked.",
@@ -191,10 +405,20 @@ def login():
                 url_for("auth.login")
             )
 
+        # -----------------------------------------
+        # Create session
+        # -----------------------------------------
+
         session.clear()
 
         session["user_id"] = str(
             user["_id"]
+        )
+
+        # Optional username session
+        session["username"] = user.get(
+            "username",
+            ""
         )
 
         return redirect(
@@ -205,6 +429,10 @@ def login():
         "login.html"
     )
 
+
+# =========================================================
+# LOGOUT
+# =========================================================
 
 @auth_bp.route("/logout")
 def logout():
