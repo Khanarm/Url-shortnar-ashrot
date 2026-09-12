@@ -1,212 +1,216 @@
 {% extends "base.html" %}
 
 {% block title %}
-Dashboard - URL Shortener
+Dashboard - aShort
 {% endblock %}
 
 {% block content %}
 
 <section class="hero">
 
-    <h1>Dashboard</h1>
+<h1>💰 My Dashboard</h1>
 
-    <div class="features">
+{% with messages = get_flashed_messages(with_categories=true) %}
 
-        <div class="card">
-
-            <h2>Total Links</h2>
-
-            <p>{{ total_links }}</p>
-
-        </div>
+    {% for category, message in messages %}
 
         <div class="card">
 
-            <h2>Total Clicks</h2>
-
-            <p>{{ total_clicks }}</p>
+            <p>{{ message }}</p>
 
         </div>
 
-    </div>
+    {% endfor %}
 
-    <h2>Your Links</h2>
+{% endwith %}
 
-    <form
-        method="GET"
-        action="/dashboard"
-        style="
-        margin:20px 0;
-        display:flex;
-        gap:10px;
-        justify-content:center;
-        flex-wrap:wrap;">
 
-        <input
-            type="text"
-            name="search"
-            placeholder="Search URL, Alias or Backup Tag..."
-            value="{{ search }}">
+<div class="features">
 
-        <button type="submit">
-            🔍 Search
-        </button>
+<div class="card">
 
-        <a href="/dashboard">
+<h2>Today's Earning</h2>
 
-            <button type="button">
-                Clear
-            </button>
+<p>
+<strong>
+{{ "%.6f"|format(today_earning) }} USDT
+</strong>
+</p>
 
-        </a>
+</div>
 
-    </form>
 
-    <table>
+<div class="card">
 
-        <tr>
+<h2>Total Earning</h2>
 
-            <th>Original URL</th>
+<p>
+<strong>
+{{ "%.6f"|format(user.get("total_earning", 0)) }} USDT
+</strong>
+</p>
 
-            <th>Short URL</th>
+</div>
 
-            <th>Alias</th>
 
-            <th>Backup Tag</th>
+<div class="card">
 
-            <th>Clicks</th>
+<h2>Available Balance</h2>
 
-            <th>Actions</th>
+<p>
+<strong>
+{{ "%.6f"|format(user.get("available_balance", 0)) }} USDT
+</strong>
+</p>
 
-        </tr>
+</div>
 
-        {% for url in urls %}
+</div>
 
-        <tr>
 
-            <td>
+<br>
 
-                {{ url["original_url"] }}
 
-            </td>
+<div class="card">
 
-            <td>
+<h2>📤 Withdraw USDT</h2>
 
-                <a
-                    href="{{ request.host_url }}{{ url['short_code'] }}"
-                    target="_blank">
+<p>
+Minimum withdrawal:
+{{ min_withdraw }} USDT
+</p>
 
-                    {{ request.host_url }}{{ url["short_code"] }}
+<form method="POST"
+      action="/withdraw">
 
-                </a>
+<input
+    type="number"
+    name="amount"
+    step="0.000001"
+    min="{{ min_withdraw }}"
+    placeholder="Amount in USDT"
+    required>
 
-            </td>
+<input
+    type="text"
+    name="wallet"
+    placeholder="USDT TRC20 Wallet Address"
+    required>
 
-            <td>
+<select name="network">
 
-                {{ url.get("alias","-") }}
+<option value="TRC20">
+TRC20
+</option>
 
-            </td>
+</select>
 
-            <td>
+<button type="submit">
+📤 Request Withdrawal
+</button>
 
-                {{ url.get("backup_tag","-") }}
+</form>
 
-            </td>
+</div>
 
-            <td>
 
-                {{ url.get("clicks",0) }}
+<br>
 
-            </td>
 
-            <td>
+<div class="card">
 
-                <button
-                    type="button"
-                    onclick="copyLink('{{ request.host_url }}{{ url['short_code'] }}')">
+<h2>🔑 API Key</h2>
 
-                    📋 Copy
+<p>
+Use this API key in your Auto Filter Bot.
+</p>
 
-                </button>
+<input
+    type="text"
+    value="{{ user.get('api_key', '') }}"
+    readonly
+    onclick="this.select()">
 
-                <a href="/delete/{{ url['_id'] }}">
+<p>
+API Endpoint:
+</p>
 
-                    Delete
+<code>
+{{ request.host_url }}api/v1/shorten
+</code>
 
-                </a>
+</div>
 
-            </td>
 
-        </tr>
+<br>
 
-        {% else %}
 
-        <tr>
+<div class="card">
 
-            <td colspan="6">
+<h2>📋 Withdrawal History</h2>
 
-                No links found.
+<p>
+Total Withdrawals:
+{{ user.get("total_withdrawals", 0) }}
+</p>
 
-            </td>
+<p>
+Total Withdrawn:
+{{ "%.6f"|format(user.get("total_withdrawn", 0)) }}
+USDT
+</p>
 
-        </tr>
+</div>
 
-        {% endfor %}
 
-</table>
+<div class="card">
 
-    <div
-        style="
-        margin-top:30px;
-        display:flex;
-        justify-content:center;
-        gap:10px;
-        flex-wrap:wrap;">
+<h2>Recent Withdrawals</h2>
 
-        {% if pagination.has_prev %}
+{% for item in history %}
 
-        <a href="{{ url_for('dashboard.dashboard', page=pagination.prev_num, search=search) }}">
+<hr>
 
-            <button>
+<p>
+<strong>
+{{ "%.6f"|format(item.get("amount", 0)) }} USDT
+</strong>
+</p>
 
-                ⬅ Previous
+<p>
+Network:
+{{ item.get("network", "TRC20") }}
+</p>
 
-            </button>
+<p>
+Status:
+{{ item.get("status", "PENDING") }}
+</p>
 
-        </a>
+<p>
+Wallet:
+{{ item.get("wallet", "") }}
+</p>
 
-        {% endif %}
+{% else %}
 
+<p>
+No withdrawals yet.
+</p>
 
-        <span
-            style="
-            padding:10px 18px;
-            border-radius:10px;
-            background:#1f2937;
-            color:white;">
+{% endfor %}
 
-            Page {{ pagination.page }} of {{ pagination.pages if pagination.pages > 0 else 1 }}
+</div>
 
-        </span>
 
+<p>
 
-        {% if pagination.has_next %}
+<a href="/auth/logout">
+Logout
+</a>
 
-        <a href="{{ url_for('dashboard.dashboard', page=pagination.next_num, search=search) }}">
-
-            <button>
-
-                Next ➡
-
-            </button>
-
-        </a>
-
-        {% endif %}
-
-    </div>
+</p>
 
 </section>
 
-{% endblock %}        
+{% endblock %}
