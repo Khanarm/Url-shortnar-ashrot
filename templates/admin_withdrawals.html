@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}
+Withdrawals - Admin
+{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+
+<h1>📤 Withdrawal Requests</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+{% for category, message in messages %}
+
+<div class="card">
+
+<p>{{ message }}</p>
+
+</div>
+
+{% endfor %}
+
+{% endwith %}
+
+
+{% for item in withdrawals %}
+
+<div class="card">
+
+<h2>
+@{{ item.get("username", "") }}
+</h2>
+
+<p>
+Amount:
+<strong>
+{{ "%.6f"|format(item.get("amount", 0)) }}
+USDT
+</strong>
+</p>
+
+<p>
+Network:
+{{ item.get("network", "TRC20") }}
+</p>
+
+<p>
+Wallet:
+<code>
+{{ item.get("wallet", "") }}
+</code>
+</p>
+
+<p>
+Status:
+<strong>
+{{ item.get("status", "PENDING") }}
+</strong>
+</p>
+
+
+{% if item.get("status") == "PENDING" %}
+
+<form
+    method="POST"
+    action="/admin/withdrawal/{{ item['_id'] }}/accept"
+    style="display:inline;">
+
+<button type="submit">
+✅ Accept
+</button>
+
+</form>
+
+
+<form
+    method="POST"
+    action="/admin/withdrawal/{{ item['_id'] }}/reject"
+    style="display:inline;">
+
+<button type="submit">
+❌ Reject
+</button>
+
+</form>
+
+{% endif %}
+
+</div>
+
+<br>
+
+{% else %}
+
+<div class="card">
+
+<p>
+No withdrawal requests.
+</p>
+
+</div>
+
+{% endfor %}
+
+
+<p>
+
+<a href="/admin/dashboard">
+⬅ Back to Admin
+</a>
+
+</p>
+
+</section>
+
+{% endblock %}
