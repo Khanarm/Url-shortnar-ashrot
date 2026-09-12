@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}
+Admin Panel - aShort
+{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+
+<h1>👑 Admin Panel</h1>
+
+
+<div class="features">
+
+<div class="card">
+
+<h2>Total Users</h2>
+
+<p>
+{{ total_users }}
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>Today's Earning</h2>
+
+<p>
+{{ "%.6f"|format(today_earning) }} USDT
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>Total Earning</h2>
+
+<p>
+{{ "%.6f"|format(total_earning) }} USDT
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>Available Balance</h2>
+
+<p>
+{{ "%.6f"|format(total_balance) }} USDT
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>Total Withdrawn</h2>
+
+<p>
+{{ "%.6f"|format(total_withdrawn) }} USDT
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>Pending Withdrawals</h2>
+
+<p>
+{{ pending_withdrawals }}
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>Paid Withdrawals</h2>
+
+<p>
+{{ paid_withdrawals }}
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>Rejected</h2>
+
+<p>
+{{ rejected_withdrawals }}
+</p>
+
+</div>
+
+</div>
+
+
+<br>
+
+<div class="card">
+
+<h2>📤 Withdrawal Requests</h2>
+
+<a href="/admin/withdrawals">
+
+<button>
+Open Withdrawal Requests
+</button>
+
+</a>
+
+</div>
+
+
+<br>
+
+
+<h2>👥 Users</h2>
+
+<div class="card">
+
+<table>
+
+<tr>
+
+<th>Username</th>
+
+<th>Today</th>
+
+<th>Total</th>
+
+<th>Balance</th>
+
+<th>Withdrawals</th>
+
+<th>Total Withdrawn</th>
+
+</tr>
+
+
+{% for user in users %}
+
+<tr>
+
+<td>
+@{{ user.get("username", "") }}
+</td>
+
+<td>
+{{ "%.6f"|format(user.get("today_earning", 0)) }}
+USDT
+</td>
+
+<td>
+{{ "%.6f"|format(user.get("total_earning", 0)) }}
+USDT
+</td>
+
+<td>
+{{ "%.6f"|format(user.get("available_balance", 0)) }}
+USDT
+</td>
+
+<td>
+{{ user.get("total_withdrawals", 0) }}
+</td>
+
+<td>
+{{ "%.6f"|format(user.get("total_withdrawn", 0)) }}
+USDT
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+
+<p>
+
+<a href="/admin/logout">
+Logout
+</a>
+
+</p>
+
+</section>
+
+{% endblock %}
