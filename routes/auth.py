@@ -114,7 +114,7 @@ def login_required(func):
             return redirect(
                 url_for(
                     "auth.login",
-                    next=request.full_path
+                    next=request.path
                 )
             )
 
