@@ -1,7 +1,7 @@
-from flask import (
-    Flask,
-    render_template
-)
+import os
+
+from flask import Flask, render_template
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import Config
 
@@ -25,26 +25,31 @@ app.config.from_object(Config)
 
 
 # =========================================================
+# RAILWAY / PROXY SUPPORT
+# =========================================================
+
+app.wsgi_app = ProxyFix(
+    app.wsgi_app,
+    x_for=1,
+    x_proto=1,
+    x_host=1
+)
+
+
+# =========================================================
 # SESSION CONFIGURATION
 # =========================================================
 
-# Flask session needs a secret key.
-# Config.py me SECRET_KEY hona chahiye.
-if not app.config.get("SECRET_KEY"):
+app.config["SESSION_COOKIE_NAME"] = "ashort_session"
 
-    raise RuntimeError(
-        "SECRET_KEY is missing. Please set SECRET_KEY in Config/environment."
-    )
-
-
-# Railway / HTTPS friendly session settings
 app.config["SESSION_COOKIE_HTTPONLY"] = True
-app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
-# Use secure cookies when running on HTTPS
 app.config["SESSION_COOKIE_SECURE"] = True
 
-# Permanent session lifetime
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+
+app.config["SESSION_COOKIE_PATH"] = "/"
+
 app.config["PERMANENT_SESSION_LIFETIME"] = 60 * 60 * 24 * 30
 
 
@@ -56,15 +61,13 @@ try:
 
     client.admin.command("ping")
 
-    print(
-        "✅ MongoDB Connected Successfully"
-    )
+    print("✅ MongoDB Connected Successfully")
 
 except Exception as e:
 
     print(
         "❌ MongoDB Connection Failed:",
-        e
+        repr(e)
     )
 
 
@@ -72,33 +75,21 @@ except Exception as e:
 # BLUEPRINTS
 # =========================================================
 
-app.register_blueprint(
-    home_bp
-)
+app.register_blueprint(home_bp)
 
-app.register_blueprint(
-    dashboard_bp
-)
+app.register_blueprint(dashboard_bp)
 
-app.register_blueprint(
-    links_bp
-)
+app.register_blueprint(links_bp)
 
-app.register_blueprint(
-    api_bp
-)
+app.register_blueprint(api_bp)
 
-app.register_blueprint(
-    auth_bp
-)
+app.register_blueprint(auth_bp)
 
-app.register_blueprint(
-    admin_bp
-)
+app.register_blueprint(admin_bp)
 
 
 # =========================================================
-# 404 ERROR
+# 404
 # =========================================================
 
 @app.errorhandler(404)
@@ -110,7 +101,7 @@ def page_not_found(error):
 
 
 # =========================================================
-# TEST ROUTE
+# TEST
 # =========================================================
 
 @app.route("/test")
@@ -125,8 +116,15 @@ def test():
 
 if __name__ == "__main__":
 
+    port = int(
+        os.environ.get(
+            "PORT",
+            8000
+        )
+    )
+
     app.run(
         host="0.0.0.0",
-        port=8000,
+        port=port,
         debug=False
     )
