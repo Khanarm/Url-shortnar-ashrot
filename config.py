@@ -32,13 +32,13 @@ class Config:
     EARNING_PER_VISIT_USDT = float(
         os.getenv(
             "EARNING_PER_VISIT_USDT",
-            "0.001"
+            "0.002"
         )
     )
 
     MIN_WITHDRAW_USDT = float(
         os.getenv(
             "MIN_WITHDRAW_USDT",
-            "1"
+            "10"
         )
     )
