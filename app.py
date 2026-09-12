@@ -15,12 +15,43 @@ from routes.admin import admin_bp
 from mongo import client
 
 
+# =========================================================
+# FLASK APP
+# =========================================================
+
 app = Flask(__name__)
 
 app.config.from_object(Config)
 
 
-# MongoDB connection test
+# =========================================================
+# SESSION CONFIGURATION
+# =========================================================
+
+# Flask session needs a secret key.
+# Config.py me SECRET_KEY hona chahiye.
+if not app.config.get("SECRET_KEY"):
+
+    raise RuntimeError(
+        "SECRET_KEY is missing. Please set SECRET_KEY in Config/environment."
+    )
+
+
+# Railway / HTTPS friendly session settings
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+
+# Use secure cookies when running on HTTPS
+app.config["SESSION_COOKIE_SECURE"] = True
+
+# Permanent session lifetime
+app.config["PERMANENT_SESSION_LIFETIME"] = 60 * 60 * 24 * 30
+
+
+# =========================================================
+# MONGODB CONNECTION TEST
+# =========================================================
+
 try:
 
     client.admin.command("ping")
@@ -37,7 +68,10 @@ except Exception as e:
     )
 
 
-# Blueprints
+# =========================================================
+# BLUEPRINTS
+# =========================================================
+
 app.register_blueprint(
     home_bp
 )
@@ -63,6 +97,10 @@ app.register_blueprint(
 )
 
 
+# =========================================================
+# 404 ERROR
+# =========================================================
+
 @app.errorhandler(404)
 def page_not_found(error):
 
@@ -71,16 +109,24 @@ def page_not_found(error):
     ), 404
 
 
+# =========================================================
+# TEST ROUTE
+# =========================================================
+
 @app.route("/test")
 def test():
 
     return "Working"
 
 
+# =========================================================
+# RUN
+# =========================================================
+
 if __name__ == "__main__":
 
     app.run(
         host="0.0.0.0",
         port=8000,
-        debug=True
+        debug=False
     )
