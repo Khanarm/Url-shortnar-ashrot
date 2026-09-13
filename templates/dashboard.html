@@ -10,6 +10,7 @@ Dashboard - aShort
 
 <h1>💰 My Dashboard</h1>
 
+
 {% with messages = get_flashed_messages(with_categories=true) %}
 
     {% for category, message in messages %}
@@ -71,39 +72,72 @@ Dashboard - aShort
 <br>
 
 
+<!-- PROFILE BUTTON -->
+
 <div class="card">
 
-<h2>📤 Withdraw USDT</h2>
+<h2>👤 My Profile</h2>
+
+<p>
+Manage your personal and bank account details.
+</p>
+
+<a href="{{ url_for('dashboard.profile') }}">
+<button type="button">
+👤 Open Profile
+</button>
+</a>
+
+</div>
+
+
+<br>
+
+
+<!-- WITHDRAW -->
+
+<div class="card">
+
+<h2>📤 Withdraw</h2>
 
 <p>
 Minimum withdrawal:
+<strong>
 {{ min_withdraw }} USDT
+</strong>
+</p>
+
+
+{% set bank = user.get("bank_details", {}) %}
+
+{% if bank.get("account_number") %}
+
+<p>
+🏦 Bank:
+<strong>
+{{ bank.get("bank_name", "") }}
+</strong>
+</p>
+
+<p>
+💳 Account:
+<strong>
+•••• {{ bank.get("account_number", "")[-4:] }}
+</strong>
 </p>
 
 <form method="POST"
-      action="/withdraw">
+      action="{{ url_for('dashboard.withdraw') }}">
 
 <input
     type="number"
     name="amount"
     step="0.000001"
     min="{{ min_withdraw }}"
+    max="{{ user.get('available_balance', 0) }}"
     placeholder="Amount in USDT"
     required>
 
-<input
-    type="text"
-    name="wallet"
-    placeholder="USDT TRC20 Wallet Address"
-    required>
-
-<select name="network">
-
-<option value="TRC20">
-TRC20
-</option>
-
-</select>
 
 <button type="submit">
 📤 Request Withdrawal
@@ -111,11 +145,27 @@ TRC20
 
 </form>
 
+{% else %}
+
+<p>
+⚠️ Bank account details are not added yet.
+</p>
+
+<a href="{{ url_for('dashboard.profile') }}">
+<button type="button">
+🏦 Add Bank Account
+</button>
+</a>
+
+{% endif %}
+
 </div>
 
 
 <br>
 
+
+<!-- API KEY -->
 
 <div class="card">
 
@@ -131,6 +181,7 @@ Use this API key in your Auto Filter Bot.
     readonly
     onclick="this.select()">
 
+
 <p>
 API Endpoint:
 </p>
@@ -145,27 +196,39 @@ API Endpoint:
 <br>
 
 
+<!-- WITHDRAWAL SUMMARY -->
+
 <div class="card">
 
-<h2>📋 Withdrawal History</h2>
+<h2>📋 Withdrawal Summary</h2>
 
 <p>
 Total Withdrawals:
+<strong>
 {{ user.get("total_withdrawals", 0) }}
+</strong>
 </p>
 
 <p>
 Total Withdrawn:
+<strong>
 {{ "%.6f"|format(user.get("total_withdrawn", 0)) }}
 USDT
+</strong>
 </p>
 
 </div>
 
 
+<br>
+
+
+<!-- WITHDRAWAL HISTORY -->
+
 <div class="card">
 
-<h2>Recent Withdrawals</h2>
+<h2>📜 Recent Withdrawals</h2>
+
 
 {% for item in history %}
 
@@ -177,20 +240,33 @@ USDT
 </strong>
 </p>
 
+
 <p>
-Network:
-{{ item.get("network", "TRC20") }}
+🏦 Bank:
+{{ item.get("bank_details", {}).get("bank_name", "N/A") }}
 </p>
+
+
+<p>
+💳 Account:
+••••
+{{ item.get("bank_details", {}).get("account_number", "")[-4:] }}
+</p>
+
+
+<p>
+🔢 IFSC:
+{{ item.get("bank_details", {}).get("ifsc", "N/A") }}
+</p>
+
 
 <p>
 Status:
+<strong>
 {{ item.get("status", "PENDING") }}
+</strong>
 </p>
 
-<p>
-Wallet:
-{{ item.get("wallet", "") }}
-</p>
 
 {% else %}
 
@@ -203,13 +279,17 @@ No withdrawals yet.
 </div>
 
 
+<br>
+
+
 <p>
 
-<a href="/auth/logout">
+<a href="{{ url_for('auth.logout') }}">
 Logout
 </a>
 
 </p>
+
 
 </section>
 
