@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Profile - aShort
+{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+
+<h1>👤 My Profile</h1>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+    {% for category, message in messages %}
+
+        <div class="card">
+
+            <p>{{ message }}</p>
+
+        </div>
+
+    {% endfor %}
+
+{% endwith %}
+
+
+<div class="card profile-card">
+
+<h2>👤 Account Information</h2>
+
+<p>
+<strong>Username:</strong>
+@{{ user.get("username", "") }}
+</p>
+
+<p>
+<strong>Email:</strong>
+{{ user.get("email", "") }}
+</p>
+
+</div>
+
+
+<br>
+
+
+<div class="card profile-card">
+
+<h2>🏦 Bank Account Details</h2>
+
+<p>
+Enter your bank details carefully. These details will be used for withdrawals.
+</p>
+
+
+<form method="POST"
+      action="{{ url_for('dashboard.profile') }}">
+
+
+<label>
+Mobile Number
+</label>
+
+<input
+    type="tel"
+    name="mobile"
+    value="{{ user.get('bank_details', {}).get('mobile', '') }}"
+    placeholder="10 digit mobile number"
+    maxlength="10"
+    required>
+
+
+<label>
+Bank Name
+</label>
+
+<input
+    type="text"
+    name="bank_name"
+    value="{{ user.get('bank_details', {}).get('bank_name', '') }}"
+    placeholder="Example: State Bank of India"
+    required>
+
+
+<label>
+Account Holder Name
+</label>
+
+<input
+    type="text"
+    name="account_holder"
+    value="{{ user.get('bank_details', {}).get('account_holder', '') }}"
+    placeholder="Name as per bank account"
+    required>
+
+
+<label>
+Account Number
+</label>
+
+<input
+    type="text"
+    name="account_number"
+    value="{{ user.get('bank_details', {}).get('account_number', '') }}"
+    placeholder="Bank account number"
+    inputmode="numeric"
+    required>
+
+
+<label>
+IFSC Code
+</label>
+
+<input
+    type="text"
+    name="ifsc"
+    value="{{ user.get('bank_details', {}).get('ifsc', '') }}"
+    placeholder="Example: SBIN0001234"
+    maxlength="11"
+    style="text-transform:uppercase;"
+    required>
+
+
+<label>
+Branch
+</label>
+
+<input
+    type="text"
+    name="branch"
+    value="{{ user.get('bank_details', {}).get('branch', '') }}"
+    placeholder="Bank branch"
+    required>
+
+
+<label>
+UPI ID
+<span style="opacity:.6;">
+(Optional)
+</span>
+</label>
+
+<input
+    type="text"
+    name="upi_id"
+    value="{{ user.get('bank_details', {}).get('upi_id', '') }}"
+    placeholder="Example: username@upi">
+
+
+<button type="submit">
+💾 Save Bank Details
+</button>
+
+</form>
+
+</div>
+
+
+<br>
+
+
+<div class="card">
+
+<h2>💰 Balance</h2>
+
+<p>
+Available Balance
+</p>
+
+<h2>
+{{ "%.6f"|format(user.get("available_balance", 0)) }} USDT
+</h2>
+
+<a href="{{ url_for('dashboard.dashboard') }}">
+⬅ Back to Dashboard
+</a>
+
+</div>
+
+
+</section>
+
+{% endblock %}
