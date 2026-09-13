@@ -39,23 +39,42 @@ Home
 </a>
 </li>
 
+
+{% if session.get("user_id") %}
+
 <li>
-<a href="/dashboard">
+<a href="{{ url_for('dashboard.dashboard') }}">
 Dashboard
 </a>
 </li>
 
 <li>
-<a href="/auth/login">
+<a href="{{ url_for('dashboard.profile') }}">
+👤 Profile
+</a>
+</li>
+
+<li>
+<a href="{{ url_for('auth.logout') }}">
+Logout
+</a>
+</li>
+
+{% else %}
+
+<li>
+<a href="{{ url_for('auth.login') }}">
 Login
 </a>
 </li>
 
 <li>
-<a href="/auth/register">
+<a href="{{ url_for('auth.register') }}">
 Register
 </a>
 </li>
+
+{% endif %}
 
 </ul>
 
