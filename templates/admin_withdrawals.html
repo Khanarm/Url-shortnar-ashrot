@@ -10,6 +10,7 @@ Withdrawals - Admin
 
 <h1>📤 Withdrawal Requests</h1>
 
+
 {% with messages = get_flashed_messages(with_categories=true) %}
 
 {% for category, message in messages %}
@@ -27,11 +28,15 @@ Withdrawals - Admin
 
 {% for item in withdrawals %}
 
+{% set bank = item.get("bank_details", {}) %}
+
+
 <div class="card">
 
 <h2>
-@{{ item.get("username", "") }}
+👤 @{{ item.get("username", "") }}
 </h2>
+
 
 <p>
 Amount:
@@ -41,17 +46,67 @@ USDT
 </strong>
 </p>
 
-<p>
-Network:
-{{ item.get("network", "TRC20") }}
-</p>
+
+<hr>
+
+
+<h3>
+🏦 Bank Account Details
+</h3>
+
 
 <p>
-Wallet:
+<strong>Mobile:</strong>
+{{ bank.get("mobile", "N/A") }}
+</p>
+
+
+<p>
+<strong>Bank Name:</strong>
+{{ bank.get("bank_name", "N/A") }}
+</p>
+
+
+<p>
+<strong>Account Holder:</strong>
+{{ bank.get("account_holder", "N/A") }}
+</p>
+
+
+<p>
+<strong>Account Number:</strong>
 <code>
-{{ item.get("wallet", "") }}
+{{ bank.get("account_number", "N/A") }}
 </code>
 </p>
+
+
+<p>
+<strong>IFSC:</strong>
+<code>
+{{ bank.get("ifsc", "N/A") }}
+</code>
+</p>
+
+
+<p>
+<strong>Branch:</strong>
+{{ bank.get("branch", "N/A") }}
+</p>
+
+
+{% if bank.get("upi_id") %}
+
+<p>
+<strong>UPI ID:</strong>
+{{ bank.get("upi_id") }}
+</p>
+
+{% endif %}
+
+
+<hr>
+
 
 <p>
 Status:
@@ -63,13 +118,14 @@ Status:
 
 {% if item.get("status") == "PENDING" %}
 
+
 <form
     method="POST"
-    action="/admin/withdrawal/{{ item['_id'] }}/accept"
+    action="{{ url_for('admin.accept_withdrawal', withdrawal_id=item['_id']) }}"
     style="display:inline;">
 
 <button type="submit">
-✅ Accept
+✅ Mark as PAID
 </button>
 
 </form>
@@ -77,7 +133,7 @@ Status:
 
 <form
     method="POST"
-    action="/admin/withdrawal/{{ item['_id'] }}/reject"
+    action="{{ url_for('admin.reject_withdrawal', withdrawal_id=item['_id']) }}"
     style="display:inline;">
 
 <button type="submit">
@@ -86,11 +142,13 @@ Status:
 
 </form>
 
+
 {% endif %}
 
 </div>
 
 <br>
+
 
 {% else %}
 
@@ -107,11 +165,12 @@ No withdrawal requests.
 
 <p>
 
-<a href="/admin/dashboard">
+<a href="{{ url_for('admin.dashboard') }}">
 ⬅ Back to Admin
 </a>
 
 </p>
+
 
 </section>
 
