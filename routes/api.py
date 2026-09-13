@@ -179,8 +179,10 @@ def shorten_v1():
 
         base = request.host_url.rstrip("/")
 
+        # IMPORTANT:
+        # Website verification/redirect route is /go/<short_code>
         short_url = (
-            f"{base}/{code}"
+            f"{base}/go/{code}"
         )
 
         if suffix:
@@ -201,6 +203,7 @@ def shorten_v1():
             )
 
         })
+
 
     # -------------------------
     # Multiple URLs
@@ -263,7 +266,9 @@ def shorten_v1():
 
             })
 
-            short_url = f"{base}/{code}"
+            # IMPORTANT:
+            # Use verification/redirect route
+            short_url = f"{base}/go/{code}"
 
             if suffix:
 
@@ -279,6 +284,7 @@ def shorten_v1():
 
             })
 
+
         return jsonify({
 
             "success": True,
@@ -288,6 +294,7 @@ def shorten_v1():
             "results": results
 
         })
+
 
     return jsonify({
 
