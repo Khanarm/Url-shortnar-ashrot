@@ -68,6 +68,75 @@ def get_api_user():
     })
 
 
+# ---------------------------------------------------------------------------
+# Shortzy / AdLinkFly compatible endpoint
+# ---------------------------------------------------------------------------
+# Shortzy calls custom shortener domains using:
+#   GET /api?api=<API_KEY>&url=<LONG_URL>
+# and expects an AdLinkFly-style JSON response containing `shortenedUrl`.
+# This endpoint keeps the existing /api/v1/shorten API untouched while making
+# this service usable directly with the bot's existing Shortzy integration.
+@api_bp.route(
+    "",
+    methods=["GET"]
+)
+def shortzy_compat():
+
+    user = get_api_user()
+
+    if not user:
+        return jsonify({
+            "status": "error",
+            "message": "Invalid or missing API key."
+        }), 401
+
+    original_url = str(
+        request.args.get("url", "")
+    ).strip()
+
+    if not original_url:
+        return jsonify({
+            "status": "error",
+            "message": "URL is required."
+        }), 400
+
+    alias = str(
+        request.args.get("alias", "")
+    ).strip()
+
+    if alias:
+        if urls.find_one({"short_code": alias}):
+            return jsonify({
+                "status": "error",
+                "message": "Alias already exists."
+            }), 400
+        code = alias
+    else:
+        code = generate_code()
+
+    urls.insert_one({
+        "original_url": original_url,
+        "short_code": code,
+        "alias": alias,
+        "backup_tag": "",
+        "clicks": 0,
+        "owner_id": str(user["_id"]),
+        "owner_username": user.get("username", ""),
+        "created_at": datetime.utcnow()
+    })
+
+    base = request.host_url.rstrip("/")
+    short_url = f"{base}/go/{code}"
+
+    # AdLinkFly/Shortzy-compatible response.
+    return jsonify({
+        "status": "success",
+        "shortenedUrl": short_url,
+        "short_url": short_url,
+        "short_code": code
+    }), 200
+
+
 @api_bp.route(
     "/v1/shorten",
     methods=["POST"]
