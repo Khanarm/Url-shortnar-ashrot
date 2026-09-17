@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template
+from flask import Flask, render_template, send_from_directory
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import Config
@@ -110,6 +110,9 @@ def test():
     return "Working"
 
 
+@app.route("/sw.js")
+def monetag_sw():
+    return send_from_directory(app.root_path, "sw.js")
 # =========================================================
 # RUN
 # =========================================================
